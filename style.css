@@ -1,0 +1,181 @@
+*,*::after,*::before
+{
+    box-sizing : border-box;
+}
+
+body 
+{
+    perspective : 600px;
+    margin : 0;
+    padding : 0
+}
+
+.container 
+{
+    position : relative;
+    width : 800px;
+    height : auto;
+    margin : 50px auto;
+    overflow: visible;
+}
+
+.container h1 ,.container h3 ,.container  p
+{
+    text-align : center;
+}
+
+
+.container h1 
+{
+    font-family :'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-shadow : 1px 1px 1px black;
+}
+
+.container h3 
+{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    letter-spacing : 2px;
+}
+
+.container > p 
+{
+    color : red;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.container0 
+{
+    display : grid;
+    grid-template-columns: repeat(2,1fr);
+    grid-template-rows : 75px 150px;
+    grid-gap : 0px 50px;
+    height : 250px;
+}
+
+.container0 p 
+{
+    font-weight : bolder;
+    font-size : 1.055em;
+    background :rgb(27, 27, 27);
+    color : white;
+    margin-top : 0;
+    line-height : 50px;
+}
+
+.container0 div
+{
+    background :azure;
+    border : 1px solid black;
+    margin-top : -17px;
+    text-align : center;
+    line-height : 150px;
+}
+
+.container3 
+{
+    margin : 15px 0px;
+    display : flex;
+    flex-direction : row;
+    justify-content : space-around;
+}
+
+.container3 svg
+{
+    width : 100px;
+    height : 100px;
+    background : rgb(34, 33, 33);
+    border : none ;
+    border-radius : 50%;
+    transition : all 0.6s ease-in;
+}
+
+.container3 svg path
+{
+   transform : translateY(13%);
+   transition : all 0.6s ease-in;
+}
+
+.container3 svg:hover
+{
+    transform :perspective(200px) translateZ(15px);
+    transition :tranform,background-color 0.67s ease-out;
+    box-shadow : -1px -1px 10px 1px black;
+    border :1px solid black;
+    background : #CCC;
+    cursor : pointer;
+}
+
+#clear 
+{
+    display: block;
+    width : 100px;
+    height : 35px;
+    margin : 100px auto;
+    font-family :'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size : 1.2em;
+    text-align : center;
+    color : white;
+    background : orange;
+    opacity : 0.7;
+    border-top-left-radius : 14px;
+    border-bottom-right-radius : 14px;
+    transition : all 0.5s ease-in;
+    border : none;
+}
+
+#clear:hover 
+{
+   transition : all 0.6s ease-out;
+   border-top-right-radius : 14px;
+   border-bottom-left-radius: 14px;
+   border-top-left-radius : 0px;
+   border-bottom-right-radius : 0px;
+   opacity : 1;
+   box-shadow : 0px -1px 9px 1px black;
+}
+
+.removeHover
+{
+  cursor : no-drop !important;
+}
+
+.newItem
+{
+    margin : 35px auto;
+    transition : all 0.6s ease-in;
+    display : block;
+    transform : scale(0,0) rotate(-90deg);
+    border-radius : 50%;
+    border : none ;
+    display : block;
+}
+.remove 
+{
+  opacity : 0;
+}
+
+.newItem path 
+{
+    transform : translateY(13%);
+}
+
+.showItem
+{
+    transition : all 0.5s ease-out;
+    width : 100px;
+    height : 100px;
+    background : rgb(34, 33, 33);
+    border : none ;
+    border-radius : 50%;
+    transform : scale(1,1) rotate(0deg) ;
+}
+
+
+
+
+
+
+
+
+
+
