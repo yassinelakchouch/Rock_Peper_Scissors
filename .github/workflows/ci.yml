@@ -21,5 +21,5 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
-      - run: npm run test:e2e -- --pass-with-no-tests
+      - run: npm run test:e2e
       - run: npm audit --audit-level=high
