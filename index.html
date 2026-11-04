@@ -13,6 +13,86 @@
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body class="min-h-dvh bg-ground font-display text-cream antialiased">
-    <div id="app"></div>
+    <div class="flex min-h-dvh flex-col">
+      <header class="flex items-center justify-between px-4 py-4 font-mono text-xs md:px-10 md:py-6">
+        <a href="https://lakchouchyassine.vercel.app" class="text-cream underline-offset-4 hover:underline">← Yassine Lakchouch</a>
+        <span class="text-muted">Other projects · 02</span>
+      </header>
+
+      <main class="grid flex-1 place-items-center px-4 pb-6">
+        <div class="grid w-full max-w-[420px] items-center gap-10 lg:max-w-none lg:w-auto lg:grid-cols-[640px_340px] lg:gap-16">
+          <section id="arena" class="arena" aria-label="The match" data-phase="open">
+            <p class="font-mono text-xs text-muted">BEST OF FIVE · <span id="round" class="text-cream">Round 1</span></p>
+
+            <div class="flex items-start justify-center gap-3.5 lg:gap-12">
+              <div class="player" data-side="you">
+                <div class="ring-box">
+                  <div class="ring-art"></div>
+                  <div class="ring-face" data-face></div>
+                  <div class="ring-badge" data-badge></div>
+                  <div class="ring-chip" data-chip hidden>MATCH POINT</div>
+                  <div class="ring-coin" data-coin hidden></div>
+                </div>
+                <span class="font-mono text-xs text-cream">YOU</span>
+                <span class="pips" data-pips aria-hidden="true"><i></i><i></i><i></i></span>
+              </div>
+              <div class="player" data-side="rival">
+                <div class="ring-box">
+                  <div class="ring-art"></div>
+                  <div class="ring-face" data-face></div>
+                  <div class="ring-badge" data-badge></div>
+                  <div class="ring-chip" data-chip hidden>MATCH POINT</div>
+                  <div class="ring-coin" data-coin hidden></div>
+                </div>
+                <span class="font-mono text-xs text-cream">RIVAL</span>
+                <span class="pips" data-pips aria-hidden="true"><i></i><i></i><i></i></span>
+              </div>
+            </div>
+
+            <div class="grid min-h-[52px] justify-items-center gap-1.5 text-center">
+              <h1 id="line" class="line">Pick your move</h1>
+              <p id="sub" class="font-mono text-xs text-muted">first to three wins the match</p>
+            </div>
+            <div id="extra" class="flex min-h-11 items-center justify-center"></div>
+
+            <div id="keys" class="flex gap-4 lg:gap-7" role="group" aria-label="Your move">
+              <button type="button" class="key" data-move="rock" aria-label="Rock (R or 1)"><span class="key-art"></span><span class="key-hint">R · 1</span></button>
+              <button type="button" class="key" data-move="paper" aria-label="Paper (P or 2)"><span class="key-art"></span><span class="key-hint">P · 2</span></button>
+              <button type="button" class="key" data-move="scissors" aria-label="Scissors (S or 3)"><span class="key-art"></span><span class="key-hint">S · 3</span></button>
+            </div>
+
+            <ol id="history" class="history" aria-label="Rounds">
+              <li>1</li><li>2</li><li>3</li><li>4</li><li>5</li>
+            </ol>
+          </section>
+
+          <aside class="hidden gap-[18px] lg:grid">
+            <h2 id="side-title" class="text-[52px] leading-[0.95] font-semibold tracking-[-0.03em]">Rock, paper, <span class="font-serif font-normal italic">rival</span></h2>
+            <p class="text-[15px] leading-relaxed text-body">A 2022 game, redrawn: two faces that react, a ring that fills, and a rival that learns your habits but never sees your move.</p>
+            <div class="flex gap-2.5" data-badges></div>
+            <dl class="stats" data-stats></dl>
+          </aside>
+        </div>
+      </main>
+
+      <footer class="flex items-center justify-between px-4 py-4 font-mono text-xs md:px-10">
+        <span class="text-muted">rps-project002</span>
+        <span class="flex gap-4">
+          <button id="sound" type="button" class="text-link" aria-pressed="true">Sound on</button>
+          <button id="open-stats" type="button" class="text-link">Stats</button>
+        </span>
+      </footer>
+    </div>
+
+    <dialog id="stats" class="sheet" aria-labelledby="stats-title">
+      <div class="flex items-center justify-between">
+        <h2 id="stats-title" class="text-2xl font-semibold tracking-tight">Stats</h2>
+        <button type="button" class="text-link" data-close>Close</button>
+      </div>
+      <div class="flex gap-2.5" data-badges></div>
+      <dl class="stats" data-stats></dl>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <p id="live" class="sr-only" aria-live="polite"></p>
   </body>
 </html>
