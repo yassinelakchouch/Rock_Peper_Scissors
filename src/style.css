@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+
+/* Board R-03: the portfolio's black, cream faces and hands, orange only for progress and wins. */
+@theme {
+  --color-ground: #0b0c0d;
+  --color-surface: #141617;
+  --color-raised: #1d2022;
+  --color-track: #2a2d30;
+  --color-cream: #ece8e1;
+  --color-shade: #d3cdc3;
+  --color-body: #b9b8b3;
+  --color-muted: #8e918f;
+  --color-accent: #ff5a2c;
+  --color-outline: rgb(236 232 225 / 0.35);
+
+  --font-display: 'Schibsted Grotesk', system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+
+  --ease-settle: cubic-bezier(0.34, 1.45, 0.5, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
