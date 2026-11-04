@@ -61,14 +61,11 @@ export function ringArc(wins: number) {
   return { dash: CIRCUMFERENCE * 0.75 * share, knob: { x: 100 + RADIUS * Math.cos(angle), y: 100 + RADIUS * Math.sin(angle) } };
 }
 
+// Only the art: track, progress, knob and halo. The face, the pick, the chip and the coin are HTML layers on top (src/style.css).
 export const ring = (side: 'you' | 'rival') =>
-  `<svg class="ring" data-ring="${side}" viewBox="-8 -12 216 222" aria-hidden="true">` +
+  `<svg class="ring-svg" data-ring="${side}" viewBox="-8 -12 216 222" aria-hidden="true">` +
   `<circle class="ring-halo" cx="100" cy="100" r="96" fill="none" stroke="#ff5a2c" stroke-width="2"/>` +
   `<circle cx="100" cy="100" r="${RADIUS}" fill="none" stroke="#2a2d30" stroke-width="14"/><circle cx="100" cy="100" r="78" fill="#141617"/>` +
   `<circle class="ring-progress" cx="100" cy="100" r="${RADIUS}" fill="none" stroke="#ff5a2c" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 ${CIRCUMFERENCE}" transform="rotate(135 100 100)"/>` +
-  `<g class="ring-knob"><circle r="10" fill="#ff5a2c"/><circle r="3.8" fill="${CREAM}"/></g>` +
-  `<foreignObject class="ring-face" x="55" y="52" width="90" height="90"></foreignObject>` +
-  `<foreignObject class="ring-badge" x="76" y="152" width="48" height="48"></foreignObject>` +
-  `<foreignObject class="ring-chip" x="46" y="4" width="108" height="28"></foreignObject>` +
-  `<foreignObject class="ring-coin" x="78" y="-8" width="44" height="44"></foreignObject>` +
+  `<g class="ring-knob" opacity="0"><circle r="10" fill="#ff5a2c"/><circle r="3.8" fill="${CREAM}"/></g>` +
   `</svg>`;
