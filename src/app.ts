@@ -44,7 +44,15 @@ export function start() {
   const side = (name: 'you' | 'rival') => $(`[data-side="${name}"]`, arena);
   const keys = $$<HTMLButtonElement>('#keys .key');
   const persist = () => save({ stats, muted: sound.muted });
-  const announce = (text: string) => ($('#live').textContent = text);
+  // Everything said in one moment (the result, match point, the match, badges) is spoken as one message, in order.
+  let spoken: string[] = [];
+  const announce = (text: string) => {
+    if (spoken.length === 0) queueMicrotask(() => {
+      $('#live').textContent = spoken.join(' ');
+      spoken = [];
+    });
+    spoken.push(text);
+  };
 
   // ---------- drawing ----------
   for (const name of ['you', 'rival'] as const) $('.ring-art', side(name)).innerHTML = ring(name);
@@ -163,6 +171,7 @@ export function start() {
   }
 
   function earn(badges: Badge[]) {
+    badges.forEach((badge) => announce(`Badge earned: ${BADGE_TEXT[badge].name}.`));
     toasts.push(...badges);
     if (badges.length) renderStats();
     if (!toastBusy) showNextBadge();
@@ -196,7 +205,10 @@ export function start() {
     announce(`${verdict(round.you, round.rival)}. ${sub.replace('·', '.')}`);
     renderHistory();
     setPoint();
-    if (isMatchPoint(match)) window.setTimeout(() => sound.play('bell'), 420);
+    if (isMatchPoint(match)) {
+      announce('Match point.');
+      window.setTimeout(() => sound.play('bell'), 420);
+    }
 
     const extra = $('#extra');
     extra.innerHTML = '';

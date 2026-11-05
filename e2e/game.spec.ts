@@ -68,6 +68,15 @@ test('stats and the sound setting survive a reload', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Sound off' })).toBeVisible();
 });
 
+test('screen readers hear match point, the match and each badge', async ({ page }) => {
+  const live = page.locator('#live');
+  for (let i = 0; i < 2; i += 1) await playRound(page, 'p');
+  await expect(live).toHaveText(/^Paper covers rock\..* Match point\.$/);
+  await playRound(page, 'p');
+  await expect(live).toContainText('You won the match, 3 to 0.');
+  await expect(live).toContainText('Badge earned: First match. Badge earned: Clean sweep.');
+});
+
 test('the Stats sheet names every badge and says which are earned', async ({ page }) => {
   for (let i = 0; i < 3; i += 1) await playRound(page, 'p');
   await page.getByRole('button', { name: 'Stats' }).click();
