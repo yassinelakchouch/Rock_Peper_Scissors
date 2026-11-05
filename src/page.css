@@ -419,24 +419,44 @@ html.chant body > div:first-child {
   text-align: center;
 }
 
+/* Frames 01-04: the fists take turns, up and down, and close in on the last beat. */
 .loader-fists {
   display: flex;
-  gap: 28px;
-  animation: loader-pump 1.4s var(--ease-out) infinite;
+  gap: 64px;
+  transition: gap 0.25s var(--ease-out);
 }
 
-.loader-chanting .loader-fists {
-  animation: none;
-}
-
-.loader-chanting .loader-fists.beat {
-  animation: loader-beat 0.25s var(--ease-out);
+.loader-fists.tight {
+  gap: 20px;
 }
 
 .loader-fist {
   display: block;
   width: 96px;
   height: 96px;
+  transition: transform 0.25s var(--ease-out);
+}
+
+.loader-fist[data-fist='you'] {
+  animation: loader-pump 1.4s ease-in-out infinite;
+}
+
+.loader-fist[data-fist='rival'] {
+  animation: loader-pump 1.4s ease-in-out -0.7s infinite;
+}
+
+.loader-chanting .loader-fist {
+  animation: none;
+}
+
+.loader-fists[data-beat='0'] [data-fist='you'],
+.loader-fists[data-beat='1'] [data-fist='rival'] {
+  transform: translateY(-18px);
+}
+
+.loader-fists[data-beat='0'] [data-fist='rival'],
+.loader-fists[data-beat='1'] [data-fist='you'] {
+  transform: translateY(18px);
 }
 
 .loader-fist[data-fist='you'] .hand {
@@ -445,6 +465,13 @@ html.chant body > div:first-child {
 
 .loader-fist[data-fist='rival'] .hand {
   transform: rotate(12deg);
+}
+
+.loader-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3vw, 36px);
 }
 
 .loader-word {
@@ -456,15 +483,37 @@ html.chant body > div:first-child {
   line-height: 1.1;
 }
 
-.loader-sub,
-.loader-cue {
+/* Frame 05: the rings open on each side of an orange "shoot!" and the fists land in them. */
+.loader .ring-box {
+  width: clamp(92px, 24vw, 160px);
+}
+
+.loader-row .loader-ring {
+  display: none;
+}
+
+.loader-shoot .loader-row .loader-ring {
+  display: block;
+  animation: loader-ring-in 0.35s var(--ease-settle) both;
+}
+
+.loader-shoot .loader-word {
+  color: var(--color-accent);
+}
+
+.loader-sub {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-muted);
 }
 
 .loader-cue {
-  color: var(--color-body);
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: var(--color-cream);
+  color: var(--color-ground);
+  font-family: var(--font-mono);
+  font-size: 12px;
   animation: loader-blink 1.6s ease-in-out infinite;
 }
 
@@ -473,14 +522,10 @@ html.chant body > div:first-child {
   visibility: hidden;
 }
 
+/* Frame 06, motion off: the title, the two rings with their faces, and Play. */
 .loader-rings {
   display: flex;
   gap: 20px;
-}
-
-.loader-rings .ring-svg {
-  width: 120px;
-  height: 120px;
 }
 
 .loader-play {
@@ -494,19 +539,19 @@ html.chant body > div:first-child {
 
 @keyframes loader-pump {
   50% {
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
 }
 
-@keyframes loader-beat {
-  40% {
-    transform: translateY(18px);
+@keyframes loader-ring-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
   }
 }
 
 @keyframes loader-blink {
   50% {
-    opacity: 0.45;
+    opacity: 0.6;
   }
 }
-
