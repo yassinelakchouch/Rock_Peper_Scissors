@@ -1,0 +1,356 @@
+/* The page (board R-03). Same cascade layer as the parts, so Tailwind's utilities still win when set. */
+@layer components {
+  .arena {
+    display: grid;
+    gap: 22px;
+    justify-items: center;
+  }
+
+  .player {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+  }
+
+  /* The ring art and its layers share one box; positions follow the art's viewBox (-8 -12 216 222). */
+  .ring-box {
+    position: relative;
+    width: clamp(150px, 42vw, 172px);
+    aspect-ratio: 216 / 222;
+  }
+
+  .ring-art {
+    position: absolute;
+    inset: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .ring-box {
+      width: 236px;
+    }
+  }
+
+  .ring-face {
+    position: absolute;
+    left: 29.6%;
+    top: 28.8%;
+    width: 41.7%;
+    aspect-ratio: 1;
+    transform-origin: 50% 80%;
+  }
+
+  .ring-badge {
+    position: absolute;
+    left: 38.9%;
+    top: 74%;
+    width: 22.2%;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    padding: 5%;
+    box-sizing: border-box;
+    border: 2px solid var(--color-accent);
+    border-radius: 999px;
+    background: var(--color-raised);
+  }
+
+  .ring-badge[data-content='?'] {
+    border-color: var(--color-outline);
+    border-style: dashed;
+  }
+
+  .ring-badge[hidden],
+  .ring-chip[hidden],
+  .ring-coin[hidden] {
+    display: none;
+  }
+
+  .sealed {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--color-muted);
+  }
+
+  .ring-chip {
+    position: absolute;
+    left: 50%;
+    top: 4%;
+    translate: -50% 0;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-ground);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .ring-coin {
+    position: absolute;
+    left: 40%;
+    top: -3%;
+    width: 20%;
+    aspect-ratio: 1;
+  }
+
+  .sparkle {
+    position: absolute;
+    inset: -40%;
+    border: 2px dashed var(--color-accent);
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  .pips {
+    display: flex;
+    gap: 6px;
+  }
+
+  .pips i {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--color-track);
+    transition:
+      background-color 300ms ease,
+      transform 300ms var(--ease-settle);
+  }
+
+  .pips i.on {
+    background: var(--color-accent);
+    transform: scale(1.1);
+  }
+
+  .line {
+    margin: 0;
+    font-size: clamp(21px, 2.4vw, 26px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .line[data-accent] {
+    color: var(--color-accent);
+  }
+
+  /* Keys: lift with an orange ring on hover, sink on press, a cream outline on focus (board R-03, key states). */
+  .key {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .key-art {
+    display: grid;
+    place-items: center;
+    width: clamp(88px, 24vw, 108px);
+    aspect-ratio: 1;
+    padding: 20%;
+    box-sizing: border-box;
+    border: 2px solid #3a3d40;
+    border-radius: 999px;
+    background: var(--color-raised);
+    transition:
+      transform 180ms var(--ease-settle),
+      border-color 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .key-hint {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+
+  @media (hover: hover) {
+    .arena:not([data-phase='sealed']) .key:hover .key-art {
+      transform: translateY(-4px);
+      border-color: var(--color-accent);
+    }
+  }
+
+  .key:active .key-art,
+  .key[data-pressed] .key-art {
+    transform: scale(0.94);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    transition-duration: 60ms;
+  }
+
+  .key[data-picked] .key-art {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .arena[data-phase='sealed'] .key:not([data-picked]) {
+    opacity: 0.35;
+  }
+
+  .key:focus-visible {
+    outline: none;
+  }
+
+  .key:focus-visible .key-art,
+  .text-link:focus-visible,
+  .again:focus-visible {
+    outline: 3px solid var(--color-cream);
+    outline-offset: 4px;
+  }
+
+  .history {
+    display: flex;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .history li {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    box-sizing: border-box;
+    border: 2px dashed var(--color-track);
+    border-radius: 999px;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .history li[data-state='win'] {
+    border: 0;
+    background: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .history li[data-state='lose'] {
+    border: 0;
+    background: var(--color-track);
+    color: var(--color-body);
+  }
+
+  .history li[data-state='draw'] {
+    border-style: solid;
+    border-color: var(--color-outline);
+    color: var(--color-body);
+  }
+
+  .hint {
+    padding: 8px 14px;
+    border: 1px solid var(--color-outline);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-body);
+  }
+
+  .again {
+    height: 44px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-cream);
+    color: var(--color-ground);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 160ms var(--ease-settle);
+  }
+
+  .again:hover {
+    transform: translateY(-2px);
+  }
+
+  .text-link {
+    border: 0;
+    background: transparent;
+    color: var(--color-cream);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  .stats {
+    display: grid;
+    margin: 0;
+  }
+
+  .stats div {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px solid rgb(236 232 225 / 0.12);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .stats dt {
+    color: var(--color-muted);
+  }
+
+  .stats dd {
+    margin: 0;
+  }
+
+  .badge-coin {
+    width: 44px;
+    height: 44px;
+    transition:
+      opacity 300ms ease,
+      transform 300ms var(--ease-settle);
+  }
+
+  .badge-coin[data-earned='false'] {
+    opacity: 0.3;
+  }
+
+  .sheet {
+    width: min(420px, calc(100vw - 32px));
+    padding: 22px;
+    border: 1px solid var(--color-outline);
+    border-radius: 16px;
+    background: var(--color-surface);
+    color: var(--color-cream);
+  }
+
+  .sheet[open] {
+    display: grid;
+    gap: 18px;
+  }
+
+  .sheet::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    top: 16px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px 8px 8px;
+    border: 1px solid var(--color-outline);
+    border-radius: 999px;
+    background: var(--color-surface);
+    translate: -50% 0;
+    white-space: nowrap;
+  }
+
+  .toast[hidden] {
+    display: none;
+  }
+
+  .toast-coin {
+    width: 34px;
+    height: 34px;
+  }
+}
