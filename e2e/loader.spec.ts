@@ -38,12 +38,18 @@ test('every load waits for a tap, counts three beats with rising ticks, then ope
 });
 
 test('the fists take turns on each beat, close in on the last, and "shoot!" opens two rings with faces (board R-04)', async ({ page }) => {
+  // A controlled clock steps through the chant's timeline, so short frames are checked on slow machines too.
+  await page.clock.install();
   await page.goto('/');
   await loader(page).click();
   const fists = page.locator('.loader-fists');
+  await page.clock.runFor(10);
   await expect(fists).toHaveAttribute('data-beat', '0');
+  await page.clock.runFor(620);
   await expect(fists).toHaveAttribute('data-beat', '1');
+  await page.clock.runFor(530);
   await expect(fists).toHaveClass(/tight/);
+  await page.clock.runFor(450);
   await expect(page.locator('.loader-word')).toHaveText('shoot!');
   const rings = page.locator('.loader-row .loader-ring');
   await expect(rings).toHaveCount(2);
