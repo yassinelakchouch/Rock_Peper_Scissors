@@ -13,3 +13,10 @@ test('a shared link shows the card', async ({ page, request }) => {
   expect(image.status()).toBe(200);
   expect(image.headers()['content-type']).toContain('image/jpeg');
 });
+
+test('scrollbars are thin and dark, not the browser’s light default', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveCSS('scrollbar-width', 'thin');
+  await expect(page.locator('html')).toHaveCSS('scrollbar-color', 'rgb(42, 45, 48) rgba(0, 0, 0, 0)');
+  await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark');
+});
