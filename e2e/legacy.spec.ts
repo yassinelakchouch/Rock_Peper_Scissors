@@ -1,9 +1,5 @@
 import { expect, test } from '@playwright/test';
-
-// The loading chant plays once a visit; these flows start where it hands over, at the arena.
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => sessionStorage.setItem('rps-project002:loaded', '1'));
-});
+import { openArena } from './helpers';
 
 test('the first version still plays at legacy/index.html, with every file found and no script error', async ({ page }) => {
   const problems: string[] = [];
@@ -16,7 +12,7 @@ test('the first version still plays at legacy/index.html, with every file found 
 });
 
 test('the header links to the first version, on one line at phone width', async ({ page }) => {
-  await page.goto('/');
+  await openArena(page);
   const link = page.getByRole('link', { name: 'First version' });
   await expect(link).toHaveAttribute('href', './legacy/index.html');
   const home = (await page.getByRole('link', { name: '← Yassine Lakchouch' }).boundingBox())!;
@@ -30,7 +26,7 @@ test('the header links to the first version, on one line at phone width', async 
 
 test('the header stays on one line on a 360 px phone', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto('/');
+  await openArena(page);
   const home = (await page.getByRole('link', { name: '← Yassine Lakchouch' }).boundingBox())!;
   const first = (await page.getByRole('link', { name: 'First version' }).boundingBox())!;
   expect(Math.abs(first.y - home.y)).toBeLessThan(2);

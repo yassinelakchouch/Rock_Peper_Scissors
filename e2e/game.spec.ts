@@ -1,12 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openArena, passLoader } from './helpers';
 
 // A steady random source: the rival plays rock until it has three of your moves, then reads you every time.
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     Math.random = () => 0.1;
-    sessionStorage.setItem('rps-project002:loaded', '1');
   });
-  await page.goto('/');
+  await openArena(page);
 });
 
 const line = (page: Page) => page.locator('#line');
@@ -60,6 +60,7 @@ test('stats and the sound setting survive a reload', async ({ page }) => {
   for (let i = 0; i < 3; i += 1) await playRound(page, 'p');
   await page.getByRole('button', { name: 'Sound on' }).click();
   await page.reload();
+  await passLoader(page);
   await page.getByRole('button', { name: 'Stats' }).click();
   const sheet = page.getByRole('dialog', { name: 'Stats' });
   await expect(sheet).toContainText('Matches1');

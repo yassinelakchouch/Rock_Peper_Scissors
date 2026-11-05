@@ -23,19 +23,33 @@ async function listen(page: Page) {
   });
 }
 
-test('the first visit waits for a tap, counts three beats with rising ticks, then opens the arena once', async ({ page }) => {
+test('every load waits for a tap, counts three beats with rising ticks, then opens the arena; a reload plays it again', async ({ page }) => {
   await listen(page);
   await page.goto('/');
   await expect(loader(page)).toBeVisible();
   await expect(page.locator('#arena')).toBeHidden();
   await loader(page).click();
   await expect(page.locator('.loader-word')).toHaveText('Rock…');
-  await expect(loader(page)).toHaveCount(0, { timeout: 4000 });
+  await expect(loader(page)).toHaveCount(0, { timeout: 6000 });
   await expect(page.locator('#arena')).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { tones: number[] }).tones.slice(0, 4))).toEqual([330, 392, 494, 300]);
   await page.reload();
-  await expect(loader(page)).toHaveCount(0);
-  await expect(page.locator('#arena')).toBeVisible();
+  await expect(loader(page)).toBeVisible();
+});
+
+test('the fists take turns on each beat, close in on the last, and "shoot!" opens two rings with faces (board R-04)', async ({ page }) => {
+  await page.goto('/');
+  await loader(page).click();
+  const fists = page.locator('.loader-fists');
+  await expect(fists).toHaveAttribute('data-beat', '0');
+  await expect(fists).toHaveAttribute('data-beat', '1');
+  await expect(fists).toHaveClass(/tight/);
+  await expect(page.locator('.loader-word')).toHaveText('shoot!');
+  const rings = page.locator('.loader-row .loader-ring');
+  await expect(rings).toHaveCount(2);
+  await expect(rings.first()).toBeVisible();
+  await expect(rings.locator('.face[data-mood="idle"]')).toHaveCount(1);
+  await expect(rings.locator('.face[data-mood="think"]')).toHaveCount(1);
 });
 
 test('a key starts the count, any key during it skips to the arena, and the first move key gets the focus', async ({ page, isMobile }) => {
