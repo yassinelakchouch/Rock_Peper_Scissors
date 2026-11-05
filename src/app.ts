@@ -113,11 +113,19 @@ export function start() {
         .map(([term, value]) => `<div><dt>${term}</dt><dd>${value}</dd></div>`)
         .join('');
     }
+    // A tooltip never shows on a phone: each coin carries its name, and the Stats sheet writes them out.
     for (const row of $$('[data-badges]')) {
       row.innerHTML = BADGES.map((badge) => {
         const { coin: label, name } = BADGE_TEXT[badge];
         const earned = stats.badges.includes(badge);
-        return `<span class="badge-coin" data-earned="${earned}" title="${name}${earned ? '' : ' · not yet'}">${coin(label)}</span>`;
+        return `<span class="badge-coin" role="img" aria-label="${name}, ${earned ? 'earned' : 'not yet'}" data-earned="${earned}">${coin(label)}</span>`;
+      }).join('');
+    }
+    for (const list of $$('[data-badge-list]')) {
+      list.innerHTML = BADGES.map((badge) => {
+        const { coin: label, name, why } = BADGE_TEXT[badge];
+        const earned = stats.badges.includes(badge);
+        return `<li data-earned="${earned}"><span class="badge-coin" data-earned="${earned}" aria-hidden="true">${coin(label)}</span><span class="grid gap-0.5"><strong>${name}</strong><span class="badge-why">${why}</span></span><span class="badge-state">${earned ? 'Earned' : 'Not yet'}</span></li>`;
       }).join('');
     }
   }
