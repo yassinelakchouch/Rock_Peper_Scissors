@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CHANT, CHANT_MS, FLY_MS, loaderMarkup } from './loader';
+import { CHANT, CHANT_MS, FLY_MS, loaderMarkup, stageUnit } from './loader';
 
 describe('loader', () => {
   it('counts three beats, each quicker than the last, then shoots inside about 2.2 s', () => {
@@ -28,11 +28,19 @@ describe('loader', () => {
     expect(html).toContain('data-content="?"');
   });
 
-  it('has a still version with the two rings and Play, and no fists', () => {
+  it('has a still version with the two rings at ease and Play, and no fists (frame 06)', () => {
     const html = loaderMarkup(true);
     expect(html).toContain('data-still');
     expect(html.split('class="ring-svg"').length - 1).toBe(2);
+    expect(html.split('data-mood="idle"').length - 1).toBe(2);
+    expect(html).not.toContain('data-content="?"');
     expect(html).toContain('>Play<');
     expect(html).not.toContain('loader-fist');
+  });
+
+  it('keeps the board’s 720 by 420 proportions on any screen', () => {
+    expect(stageUnit(1440, 900)).toBe(2);
+    expect(stageUnit(720, 420)).toBe(1);
+    expect(stageUnit(390, 844)).toBeCloseTo(390 / 720);
   });
 });
