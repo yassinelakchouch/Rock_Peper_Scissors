@@ -383,11 +383,13 @@
 }
 
 /* ---------- board R-04: the loading chant ---------- */
+/* Every size is the board's number at its 720x420 frame times --u (set from the screen), so the loader keeps the board's proportions. */
 html.chant body > div:first-child {
   visibility: hidden;
 }
 
 .loader {
+  --u: 1;
   position: fixed;
   inset: 0;
   z-index: 60;
@@ -402,6 +404,21 @@ html.chant body > div:first-child {
   transition: opacity 0.2s var(--ease-out);
 }
 
+/* Frame 04: the stage tightens around the fists on the last beat. */
+.loader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgb(0 0 0 / 0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+}
+
+.loader-tight::before {
+  opacity: 1;
+}
+
 .loader:focus-visible {
   outline: 3px solid var(--color-cream);
   outline-offset: -10px;
@@ -413,82 +430,103 @@ html.chant body > div:first-child {
 }
 
 .loader-stage {
+  position: relative;
   display: grid;
   justify-items: center;
-  gap: 18px;
+  gap: calc(18px * var(--u));
   text-align: center;
 }
 
-/* Frames 01-04: the fists take turns, up and down, and close in on the last beat. */
+/* Frame 01: both fists pump together, slowly, while "Rock, paper, rival" fades in. */
 .loader-fists {
   display: flex;
-  gap: 64px;
-  transition: gap 0.25s var(--ease-out);
-}
-
-.loader-fists.tight {
-  gap: 20px;
+  gap: calc(70px * var(--u));
+  animation: loader-pump 1.6s ease-in-out infinite;
 }
 
 .loader-fist {
   display: block;
-  width: 96px;
-  height: 96px;
+  width: calc(84px * var(--u));
+  height: calc(84px * var(--u));
   transition: transform 0.25s var(--ease-out);
 }
 
-.loader-fist[data-fist='you'] {
-  animation: loader-pump 1.4s ease-in-out infinite;
-}
-
-.loader-fist[data-fist='rival'] {
-  animation: loader-pump 1.4s ease-in-out -0.7s infinite;
-}
-
-.loader-chanting .loader-fist {
-  animation: none;
-}
-
-.loader-fists[data-beat='0'] [data-fist='you'],
-.loader-fists[data-beat='1'] [data-fist='rival'] {
-  transform: translateY(-18px);
-}
-
-.loader-fists[data-beat='0'] [data-fist='rival'],
-.loader-fists[data-beat='1'] [data-fist='you'] {
-  transform: translateY(18px);
-}
-
 .loader-fist[data-fist='you'] .hand {
-  transform: rotate(-12deg) scaleX(-1);
+  transform: rotate(-12deg);
 }
 
 .loader-fist[data-fist='rival'] .hand {
   transform: rotate(12deg);
 }
 
+/* Frames 02-04: on each beat one fist rises 18, the other rests. */
+.loader-chanting .loader-fists {
+  animation: none;
+}
+
+.loader-fists[data-beat='0'] [data-fist='you'],
+.loader-fists[data-beat='1'] [data-fist='rival'] {
+  transform: translateY(calc(-18px * var(--u)));
+}
+
 .loader-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(14px, 3vw, 36px);
+  gap: calc(40px * var(--u));
 }
 
 .loader-word {
-  min-height: 1.2em;
   font-family: var(--font-display);
-  font-size: clamp(32px, 7vw, 56px);
+  font-size: max(26px, calc(44px * var(--u)));
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   line-height: 1.1;
+  animation: loader-fade 0.7s var(--ease-out) both;
 }
 
-/* Frame 05: the rings open on each side of an orange "shoot!" and the fists land in them. */
+.loader-chanting .loader-word {
+  animation: none;
+}
+
+.loader-sub {
+  font-family: var(--font-mono);
+  font-size: max(11px, calc(13px * var(--u)));
+  color: var(--color-muted);
+}
+
+.loader-pill {
+  display: inline-flex;
+  align-items: center;
+  height: max(30px, calc(34px * var(--u)));
+  padding: 0 max(14px, calc(16px * var(--u)));
+  border-radius: 999px;
+  background: var(--color-cream);
+  color: var(--color-ground);
+  font-family: var(--font-mono);
+  font-size: max(12px, calc(13px * var(--u)));
+}
+
+.loader-chanting .loader-cue {
+  display: none;
+}
+
+/* Frame 05: the fists leave, two 170 rings open around an orange "shoot!" and the faces open their eyes. */
 .loader .ring-box {
-  width: clamp(92px, 24vw, 160px);
+  width: calc(170px * var(--u));
+}
+
+.loader .ring-progress,
+.loader .ring-knob {
+  display: none;
 }
 
 .loader-row .loader-ring {
+  display: none;
+}
+
+.loader-shoot .loader-fists,
+.loader-shoot .loader-sub {
   display: none;
 }
 
@@ -497,49 +535,67 @@ html.chant body > div:first-child {
   animation: loader-ring-in 0.35s var(--ease-settle) both;
 }
 
+.loader-shoot .loader-row .face g {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: loader-eyes 0.3s 0.15s var(--ease-out) both;
+}
+
 .loader-shoot .loader-word {
+  font-size: max(20px, calc(30px * var(--u)));
   color: var(--color-accent);
 }
 
-.loader-sub {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--color-muted);
+.loader-flying {
+  position: fixed;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.loader-cue {
-  padding: 7px 16px;
-  border-radius: 999px;
-  background: var(--color-cream);
-  color: var(--color-ground);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  animation: loader-blink 1.6s ease-in-out infinite;
+/* Frame 06, motion off: the title, two rings at ease, and Play. */
+.loader[data-still] .loader-stage {
+  gap: calc(16px * var(--u));
 }
 
-.loader-chanting .loader-sub,
-.loader-chanting .loader-cue {
-  visibility: hidden;
+.loader-title {
+  font-family: var(--font-display);
+  font-size: max(26px, calc(40px * var(--u)));
+  font-weight: 600;
+  letter-spacing: -0.03em;
 }
 
-/* Frame 06, motion off: the title, the two rings with their faces, and Play. */
 .loader-rings {
   display: flex;
-  gap: 20px;
+  gap: calc(24px * var(--u));
 }
 
-.loader-play {
-  padding: 10px 22px;
-  border-radius: 999px;
-  background: var(--color-cream);
-  color: var(--color-ground);
-  font-family: var(--font-mono);
-  font-size: 13px;
+.loader-rings .ring-box {
+  width: calc(120px * var(--u));
+}
+
+/* After the count, the arena's keys rise in, 60 ms apart. */
+.keys-rise .key {
+  animation: key-rise 0.45s var(--ease-out) both;
+}
+
+.keys-rise .key:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.keys-rise .key:nth-child(3) {
+  animation-delay: 120ms;
 }
 
 @keyframes loader-pump {
   50% {
-    transform: translateY(12px);
+    transform: translateY(calc(-12px * var(--u)));
+  }
+}
+
+@keyframes loader-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 
@@ -550,8 +606,15 @@ html.chant body > div:first-child {
   }
 }
 
-@keyframes loader-blink {
-  50% {
-    opacity: 0.6;
+@keyframes loader-eyes {
+  from {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes key-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
   }
 }

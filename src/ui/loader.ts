@@ -11,28 +11,30 @@ export const CHANT: readonly { at: number; word: string; sound: SoundName }[] = 
 export const FLY_MS = 450;
 export const CHANT_MS = 2200;
 
-const title = '<span class="loader-title">Rock, paper, <span class="font-serif italic">rival</span></span>';
+// The board draws each frame as a whole screen of 720 by 420; the loader keeps those proportions on any screen.
+export const STAGE = { width: 720, height: 420 };
+export const stageUnit = (width: number, height: number) => Math.min(width / STAGE.width, height / STAGE.height);
 
-// The arena's own ring, face and badge (frame 05): yours at ease, the rival thinking with its question mark.
-const ringFace = (side: 'you' | 'rival') =>
+// The arena's own ring and face; in the count the rival thinks with its question mark (frame 05), at rest both are at ease (frame 06).
+const ringFace = (side: 'you' | 'rival', thinking: boolean) =>
   `<span class="ring-box loader-ring" data-ring="${side}"><span class="ring-art">${ring(side)}</span>` +
-  `<span class="ring-face">${face(side === 'you' ? 'idle' : 'think')}</span>` +
-  (side === 'rival' ? '<span class="ring-badge" data-content="?">?</span>' : '') +
+  `<span class="ring-face">${face(thinking ? 'think' : 'idle')}</span>` +
+  (thinking ? '<span class="ring-badge" data-content="?">?</span>' : '') +
   `</span>`;
 
 // One button over the arena, named for what it does; the chant's words are decoration for screen readers.
 export function loaderMarkup(still: boolean): string {
   if (still) {
     return `<button type="button" class="loader" data-still aria-label="Start the game">
-      <span class="loader-stage" aria-hidden="true">${title}<span class="loader-rings">${ringFace('you')}${ringFace('rival')}</span><span class="loader-play">Play</span></span>
+      <span class="loader-stage" aria-hidden="true"><span class="loader-title">Rock, paper, <span class="font-serif italic">rival</span></span><span class="loader-rings">${ringFace('you', false)}${ringFace('rival', false)}</span><span class="loader-pill">Play</span></span>
     </button>`;
   }
   return `<button type="button" class="loader" aria-label="Start the game">
     <span class="loader-stage" aria-hidden="true">
       <span class="loader-fists"><span class="loader-fist" data-fist="you">${hand('rock')}</span><span class="loader-fist" data-fist="rival">${hand('rock')}</span></span>
-      <span class="loader-row">${ringFace('you')}<span class="loader-word">${title}</span>${ringFace('rival')}</span>
+      <span class="loader-row">${ringFace('you', false)}<span class="loader-word">Rock, paper, rival</span>${ringFace('rival', true)}</span>
       <span class="loader-sub">rps-project002</span>
-      <span class="loader-cue">Tap or press any key</span>
+      <span class="loader-pill loader-cue">Tap or press any key</span>
     </span>
   </button>`;
 }

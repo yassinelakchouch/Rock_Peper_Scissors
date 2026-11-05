@@ -37,18 +37,20 @@ test('every load waits for a tap, counts three beats with rising ticks, then ope
   await expect(loader(page)).toBeVisible();
 });
 
-test('the fists take turns on each beat, close in on the last, and "shoot!" opens two rings with faces (board R-04)', async ({ page }) => {
-  // A controlled clock steps through the chant's timeline, so short frames are checked on slow machines too.
-  await page.clock.install();
+test('the count plays board R-04 frame by frame: one fist rises per beat, "tick", the stage tightens, "shoot!" opens two rings', async ({ page }) => {
+  // A paused clock steps through the chant's timeline, so short frames are checked on slow machines too.
+  await page.clock.install({ time: new Date('2026-11-05T12:00:00') });
   await page.goto('/');
+  await page.clock.pauseAt(new Date('2026-11-05T12:00:03'));
   await loader(page).click();
   const fists = page.locator('.loader-fists');
   await page.clock.runFor(10);
-  await expect(fists).toHaveAttribute('data-beat', '0');
-  await page.clock.runFor(620);
   await expect(fists).toHaveAttribute('data-beat', '1');
+  await expect(page.locator('.loader-sub')).toHaveText('tick');
+  await page.clock.runFor(620);
+  await expect(fists).toHaveAttribute('data-beat', '0');
   await page.clock.runFor(530);
-  await expect(fists).toHaveClass(/tight/);
+  await expect(page.locator('.loader')).toHaveClass(/loader-tight/);
   await page.clock.runFor(450);
   await expect(page.locator('.loader-word')).toHaveText('shoot!');
   const rings = page.locator('.loader-row .loader-ring');
@@ -56,6 +58,19 @@ test('the fists take turns on each beat, close in on the last, and "shoot!" open
   await expect(rings.first()).toBeVisible();
   await expect(rings.locator('.face[data-mood="idle"]')).toHaveCount(1);
   await expect(rings.locator('.face[data-mood="think"]')).toHaveCount(1);
+  await page.clock.runFor(700);
+  await expect(page.locator('#live')).toHaveText('Best of five against the rival. Pick rock, paper or scissors.');
+});
+
+test('the stage keeps the board’s proportions: at 1440 x 900 every size is twice the board’s', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the desktop proportion');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const size = await page.evaluate(() => ({
+    fist: document.querySelector('.loader-fist')!.getBoundingClientRect().width,
+    word: parseFloat(getComputedStyle(document.querySelector('.loader-word')!).fontSize),
+  }));
+  expect(size).toEqual({ fist: 168, word: 88 });
 });
 
 test('a key starts the count, any key during it skips to the arena, and the first move key gets the focus', async ({ page, isMobile }) => {
@@ -79,6 +94,7 @@ test('with reduced motion it is still: the title, two rings and Play, and one pr
   await page.goto('/');
   await expect(page.locator('.loader[data-still]')).toBeVisible();
   await expect(page.locator('.loader .ring-svg')).toHaveCount(2);
+  await expect(page.locator('.loader .face[data-mood="idle"]')).toHaveCount(2);
   await expect(page.locator('.loader-fist')).toHaveCount(0);
   await loader(page).click();
   await expect(loader(page)).toHaveCount(0, { timeout: 700 });
