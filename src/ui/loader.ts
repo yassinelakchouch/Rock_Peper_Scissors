@@ -12,7 +12,7 @@ export const FLY_MS = 450;
 export const CHANT_MS = 2200;
 
 // The board draws each frame as a whole screen of 720 by 420; the loader keeps those proportions on any screen.
-export const STAGE = { width: 720, height: 420 };
+const STAGE = { width: 720, height: 420 };
 export const stageUnit = (width: number, height: number) => Math.min(width / STAGE.width, height / STAGE.height);
 
 // The arena's own ring and face; at "shoot!" the rival thinks with its question mark (frame 05).
