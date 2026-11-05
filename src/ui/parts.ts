@@ -69,3 +69,7 @@ export const ring = (side: 'you' | 'rival') =>
   `<circle class="ring-progress" cx="100" cy="100" r="${RADIUS}" fill="none" stroke="#ff5a2c" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 ${CIRCUMFERENCE}" transform="rotate(135 100 100)"/>` +
   `<g class="ring-knob" opacity="0"><circle r="10" fill="#ff5a2c"/><circle r="3.8" fill="${CREAM}"/></g>` +
   `</svg>`;
+
+// The rival's voice, mid-match and after it (board R-05 · #29): one pill that wraps only between its parts.
+export const hint = (parts: readonly string[]) =>
+  `<span class="hint">${parts.map((part, i) => `<span class="hint-part">${i === 0 ? '● ' : ''}${part}${i < parts.length - 1 ? ' ·' : ''}</span>`).join(' ')}</span>`;
