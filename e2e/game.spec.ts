@@ -43,6 +43,7 @@ test('three wins take the match: the coin lands, the streak counts, Enter plays 
   await expect(line(page)).toHaveText('You won 3–0');
   await expect(page.locator('[data-side="you"] [data-coin]')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Play again · Enter' })).toBeVisible();
+  await expect(page.locator('#extra .hint')).toHaveText('● it guessed every round: nothing to read');
   await expect(page.getByRole('status').filter({ hasText: 'Badge · First match' })).toBeVisible();
   await page.keyboard.press('Enter');
   await expect(line(page)).toHaveText('Pick your move');
@@ -98,4 +99,12 @@ test('on a phone nothing scrolls sideways and every key is at least 44 px', asyn
   test.skip(!isMobile, 'phone layout');
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
   for (const name of [/^Rock/, /^Paper/, /^Scissors/]) expect((await page.getByRole('button', { name }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+});
+
+test('after a match the rival says how it read you (board R-05 · #29)', async ({ page }) => {
+  // Three draws while it guesses rock, then it reads your rock and plays paper three times.
+  for (let i = 0; i < 6; i += 1) await playRound(page, 'r');
+  await expect(line(page)).toHaveText('The rival won 3–0');
+  await expect(page.locator('#extra .hint')).toHaveText('● it read you 3 times · you lean on rock, 5 of your last 5');
+  await expect(page.locator('#live')).toContainText('It read you 3 times; you lean on rock, 5 of your last 5.');
 });
