@@ -89,14 +89,25 @@ test('a key starts the count, any key during it skips to the arena, and the firs
   await expect(page.locator('#arena [data-side="you"] [data-badge]')).toBeEmpty();
 });
 
-test('with reduced motion it is still: the title, two rings and Play, and one press opens the arena', async ({ page }) => {
+test('with reduced motion the count runs calm (board R-05 · #33): a fist lights up instead of rising, none flies, the rings fade in', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.clock.install({ time: new Date('2026-11-05T12:00:00') });
   await page.goto('/');
-  await expect(page.locator('.loader[data-still]')).toBeVisible();
-  await expect(page.locator('.loader .ring-svg')).toHaveCount(2);
-  await expect(page.locator('.loader .face[data-mood="idle"]')).toHaveCount(2);
-  await expect(page.locator('.loader-fist')).toHaveCount(0);
+  await page.clock.pauseAt(new Date('2026-11-05T12:00:03'));
+  await expect(page.locator('.loader')).toHaveClass(/loader-calm/);
+  await expect(page.locator('.loader-fist')).toHaveCount(2);
   await loader(page).click();
-  await expect(loader(page)).toHaveCount(0, { timeout: 700 });
-  await expect(page.locator('#arena')).toBeVisible();
+  await page.clock.runFor(10);
+  await expect(page.locator('.loader-word')).toHaveText('Rock…');
+  const look = (side: string) =>
+    page.locator(`.loader-fist[data-fist="${side}"]`).evaluate((fist) => ({ opacity: getComputedStyle(fist).opacity, transform: getComputedStyle(fist).transform }));
+  await expect.poll(() => look('rival')).toEqual({ opacity: '1', transform: 'none' });
+  await expect.poll(() => look('you')).toEqual({ opacity: '0.4', transform: 'none' });
+  await page.clock.runFor(1600);
+  await expect(page.locator('.loader-word')).toHaveText('shoot!');
+  await expect(page.locator('.loader-flying')).toHaveCount(0);
+  await expect(page.locator('.loader-row .loader-ring').first()).toBeVisible();
+  await page.clock.runFor(700);
+  await expect(page.locator('#live')).toHaveText('Best of five against the rival. Pick rock, paper or scissors.');
+  await expect(page.locator('#keys')).not.toHaveClass(/keys-rise/);
 });
