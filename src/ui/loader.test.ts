@@ -13,7 +13,7 @@ describe('loader', () => {
   });
 
   it('is one button named Start the game, its words hidden from screen readers', () => {
-    const html = loaderMarkup(false);
+    const html = loaderMarkup();
     expect(html).toContain('aria-label="Start the game"');
     expect(html).toContain('class="loader-stage" aria-hidden="true"');
     expect(html.split('class="loader-fist"').length - 1).toBe(2);
@@ -21,21 +21,11 @@ describe('loader', () => {
   });
 
   it('holds frame 05: the arena’s two rings with faces, the rival thinking with its question mark', () => {
-    const html = loaderMarkup(false);
+    const html = loaderMarkup();
     expect(html.split('class="ring-box loader-ring"').length - 1).toBe(2);
     expect(html).toContain('data-mood="idle"');
     expect(html).toContain('data-mood="think"');
     expect(html).toContain('data-content="?"');
-  });
-
-  it('has a still version with the two rings at ease and Play, and no fists (frame 06)', () => {
-    const html = loaderMarkup(true);
-    expect(html).toContain('data-still');
-    expect(html.split('class="ring-svg"').length - 1).toBe(2);
-    expect(html.split('data-mood="idle"').length - 1).toBe(2);
-    expect(html).not.toContain('data-content="?"');
-    expect(html).toContain('>Play<');
-    expect(html).not.toContain('loader-fist');
   });
 
   it('keeps the board’s 720 by 420 proportions on any screen', () => {
