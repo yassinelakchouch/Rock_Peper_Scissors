@@ -1,4 +1,14 @@
+import type { ReadFacts } from '../game/rival';
 import type { Badge } from '../game/stats';
+
+// The read-out after a match (board R-05 · #29): the pill's parts, and the same words as one sentence for screen readers.
+export function readOut({ reads, habit }: ReadFacts): string[] {
+  if (reads === 0) return ['it guessed every round: nothing to read'];
+  const times = reads === 1 ? 'once' : reads === 2 ? 'twice' : `${reads} times`;
+  return [`it read you ${times}`, habit ? `you lean on ${habit.move}, ${habit.times} of your last ${habit.of}` : 'no habit stood out'];
+}
+
+export const sentence = (parts: readonly string[]) => `${parts.join('; ').replace(/^./, (first) => first.toUpperCase())}.`;
 
 export const BADGE_TEXT: Record<Badge, { coin: string; name: string; why: string }> = {
   'first-match': { coin: '1', name: 'First match', why: 'your first match, played to the end' },
