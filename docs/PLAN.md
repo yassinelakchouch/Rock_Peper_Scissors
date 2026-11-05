@@ -44,7 +44,7 @@ The design lives on the Design canvas, page "Other personal project": R-01 (stud
 
 | Moment | Motion | Sound |
 | --- | --- | --- |
-| Opening the page (board R-04) | on a stage kept at the board's 720 x 420 proportions: two fists pump together; after a tap one rises per beat on "Rock… Paper… Scissors…" while the stage tightens, then they fly into two rings around an orange "shoot!" and the faces open their eyes; the arena's keys rise in, 60 ms apart; reduced motion shows the title, two rings at ease and Play | three rising ticks, then the reveal whoosh; the arena announces itself to screen readers |
+| Opening the page (board R-04) | on a stage kept at the board's 720 x 420 proportions: two fists pump together; after a tap one rises per beat on "Rock… Paper… Scissors…" while the stage tightens, then they fly into two rings around an orange "shoot!" and the faces open their eyes; the arena's keys rise in, 60 ms apart; with reduced motion the same count runs calm (board R-05 · #33): a fist lights up instead of rising, the rings fade in, nothing flies | three rising ticks, then the reveal whoosh, with "tick" shown only when Sound is on; the arena announces itself to screen readers |
 | Hover, focus | the key lifts with an orange ring; your face starts to think | none |
 | Press | the key sinks | a soft tap |
 | Your pick | your hand drops into its badge with a small bounce | tap |
