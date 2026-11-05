@@ -4,6 +4,7 @@ import { MOVES, verdict, type Move } from './game/rules';
 import { afterMatch, afterRound, BADGES, type Badge, type Stats } from './game/stats';
 import { load, save } from './game/storage';
 import { createSound } from './sound/sound';
+import { runLoader } from './ui/chant';
 import { BADGE_TEXT } from './ui/copy';
 import { createQueue } from './ui/queue';
 import { coin, face, hand, ring, ringArc, type Mood } from './ui/parts';
@@ -354,4 +355,5 @@ export function start() {
   renderStats();
   setPhase();
   resetIdle();
+  runLoader((name) => sound.play(name), (shown) => shown && keys[0].focus());
 }

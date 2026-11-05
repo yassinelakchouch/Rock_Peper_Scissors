@@ -381,3 +381,132 @@
     height: 34px;
   }
 }
+
+/* ---------- board R-04: the loading chant ---------- */
+html.chant body > div:first-child {
+  visibility: hidden;
+}
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0 16px;
+  border: 0;
+  background: var(--color-ground);
+  color: var(--color-cream);
+  cursor: pointer;
+  transition: opacity 0.2s var(--ease-out);
+}
+
+.loader:focus-visible {
+  outline: 3px solid var(--color-cream);
+  outline-offset: -10px;
+}
+
+.loader-leave {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-stage {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.loader-fists {
+  display: flex;
+  gap: 28px;
+  animation: loader-pump 1.4s var(--ease-out) infinite;
+}
+
+.loader-chanting .loader-fists {
+  animation: none;
+}
+
+.loader-chanting .loader-fists.beat {
+  animation: loader-beat 0.25s var(--ease-out);
+}
+
+.loader-fist {
+  display: block;
+  width: 96px;
+  height: 96px;
+}
+
+.loader-fist[data-fist='you'] .hand {
+  transform: rotate(-12deg) scaleX(-1);
+}
+
+.loader-fist[data-fist='rival'] .hand {
+  transform: rotate(12deg);
+}
+
+.loader-word {
+  min-height: 1.2em;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 7vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.loader-sub,
+.loader-cue {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.loader-cue {
+  color: var(--color-body);
+  animation: loader-blink 1.6s ease-in-out infinite;
+}
+
+.loader-chanting .loader-sub,
+.loader-chanting .loader-cue {
+  visibility: hidden;
+}
+
+.loader-rings {
+  display: flex;
+  gap: 20px;
+}
+
+.loader-rings .ring-svg {
+  width: 120px;
+  height: 120px;
+}
+
+.loader-play {
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: var(--color-cream);
+  color: var(--color-ground);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+@keyframes loader-pump {
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes loader-beat {
+  40% {
+    transform: translateY(18px);
+  }
+}
+
+@keyframes loader-blink {
+  50% {
+    opacity: 0.45;
+  }
+}
+

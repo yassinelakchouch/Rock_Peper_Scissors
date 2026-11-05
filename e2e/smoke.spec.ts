@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+// The loading chant plays once a visit; these flows start where it hands over, at the arena.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('rps-project002:loaded', '1'));
+});
+
 test('the page answers with its name', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveTitle(/rps-project002/);
