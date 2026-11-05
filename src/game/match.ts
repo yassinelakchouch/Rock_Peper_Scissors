@@ -15,7 +15,7 @@ export type Match = Readonly<{
   winner: 'you' | 'rival' | null;
 }>;
 
-export type Action = { type: 'pick'; move: Move } | { type: 'reveal' } | { type: 'next'; rival: Move } | { type: 'again'; rival: Move };
+type Action = { type: 'pick'; move: Move } | { type: 'reveal' } | { type: 'next'; rival: Move } | { type: 'again'; rival: Move };
 
 export const newMatch = (rival: Move): Match => ({ phase: 'open', sealed: rival, picked: null, rounds: [], youWins: 0, rivalWins: 0, winner: null });
 
