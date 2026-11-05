@@ -44,7 +44,15 @@ export function start() {
   const side = (name: 'you' | 'rival') => $(`[data-side="${name}"]`, arena);
   const keys = $$<HTMLButtonElement>('#keys .key');
   const persist = () => save({ stats, muted: sound.muted });
-  const announce = (text: string) => ($('#live').textContent = text);
+  // Everything said in one moment (the result, match point, the match, badges) is spoken as one message, in order.
+  let spoken: string[] = [];
+  const announce = (text: string) => {
+    if (spoken.length === 0) queueMicrotask(() => {
+      $('#live').textContent = spoken.join(' ');
+      spoken = [];
+    });
+    spoken.push(text);
+  };
 
   // ---------- drawing ----------
   for (const name of ['you', 'rival'] as const) $('.ring-art', side(name)).innerHTML = ring(name);
@@ -113,11 +121,19 @@ export function start() {
         .map(([term, value]) => `<div><dt>${term}</dt><dd>${value}</dd></div>`)
         .join('');
     }
+    // A tooltip never shows on a phone: each coin carries its name, and the Stats sheet writes them out.
     for (const row of $$('[data-badges]')) {
       row.innerHTML = BADGES.map((badge) => {
         const { coin: label, name } = BADGE_TEXT[badge];
         const earned = stats.badges.includes(badge);
-        return `<span class="badge-coin" data-earned="${earned}" title="${name}${earned ? '' : ' · not yet'}">${coin(label)}</span>`;
+        return `<span class="badge-coin" role="img" aria-label="${name}, ${earned ? 'earned' : 'not yet'}" data-earned="${earned}">${coin(label)}</span>`;
+      }).join('');
+    }
+    for (const list of $$('[data-badge-list]')) {
+      list.innerHTML = BADGES.map((badge) => {
+        const { coin: label, name, why } = BADGE_TEXT[badge];
+        const earned = stats.badges.includes(badge);
+        return `<li data-earned="${earned}"><span class="badge-coin" data-earned="${earned}" aria-hidden="true">${coin(label)}</span><span class="grid gap-0.5"><strong>${name}</strong><span class="badge-why">${why}</span></span><span class="badge-state">${earned ? 'Earned' : 'Not yet'}</span></li>`;
       }).join('');
     }
   }
@@ -155,6 +171,7 @@ export function start() {
   }
 
   function earn(badges: Badge[]) {
+    badges.forEach((badge) => announce(`Badge earned: ${BADGE_TEXT[badge].name}.`));
     toasts.push(...badges);
     if (badges.length) renderStats();
     if (!toastBusy) showNextBadge();
@@ -179,16 +196,21 @@ export function start() {
 
     const roundResult = afterRound(stats, round, reading);
     stats = roundResult.stats;
-    earn(roundResult.earned);
 
     const score = `${match.youWins}–${match.rivalWins}`;
     const lead = match.youWins === match.rivalWins ? `level at ${score}` : match.youWins > match.rivalWins ? `you lead ${score}` : `the rival leads ${score}`;
     const sub = round.outcome === 'draw' ? 'no point · play the round again' : `${round.outcome === 'win' ? '+1' : 'the rival scores'} · ${lead}`;
     setLine(verdict(round.you, round.rival), sub, round.outcome === 'win');
-    announce(`${verdict(round.you, round.rival)}. ${sub.replace('·', '.')}`);
+    // Spoken apart from the sub line: "+1 · 2–0" reads aloud as symbols.
+    const said = round.outcome === 'draw' ? 'No point, play the round again.' : `${round.outcome === 'win' ? 'You score' : 'The rival scores'}, ${lead.replace('–', ' to ')}.`;
+    announce(`${verdict(round.you, round.rival)}. ${said}`);
+    earn(roundResult.earned);
     renderHistory();
     setPoint();
-    if (isMatchPoint(match)) window.setTimeout(() => sound.play('bell'), 420);
+    if (isMatchPoint(match)) {
+      announce('Match point.');
+      window.setTimeout(() => sound.play('bell'), 420);
+    }
 
     const extra = $('#extra');
     extra.innerHTML = '';

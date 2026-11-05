@@ -68,6 +68,30 @@ test('stats and the sound setting survive a reload', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Sound off' })).toBeVisible();
 });
 
+test('a round is read out in words, not symbols', async ({ page }) => {
+  await playRound(page, 'p');
+  await expect(page.locator('#live')).toHaveText('Paper covers rock. You score, you lead 1 to 0.');
+});
+
+test('screen readers hear match point, the match and each badge', async ({ page }) => {
+  const live = page.locator('#live');
+  for (let i = 0; i < 2; i += 1) await playRound(page, 'p');
+  await expect(live).toHaveText(/^Paper covers rock\..* Match point\.$/);
+  await playRound(page, 'p');
+  await expect(live).toContainText('You won the match, 3 to 0.');
+  await expect(live).toContainText('Badge earned: First match. Badge earned: Clean sweep.');
+});
+
+test('the Stats sheet names every badge and says which are earned', async ({ page }) => {
+  for (let i = 0; i < 3; i += 1) await playRound(page, 'p');
+  await page.getByRole('button', { name: 'Stats' }).click();
+  const badges = page.getByRole('list', { name: 'Badges' }).getByRole('listitem');
+  await expect(badges).toHaveCount(4);
+  await expect(badges.filter({ hasText: 'First match' })).toContainText('Earned');
+  await expect(badges.filter({ hasText: 'Clean sweep' })).toContainText('Earned');
+  await expect(badges.filter({ hasText: 'Comeback' })).toContainText('Not yet');
+});
+
 test('on a phone nothing scrolls sideways and every key is at least 44 px', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'phone layout');
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
