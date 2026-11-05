@@ -1,13 +1,13 @@
 import { isMatchPoint, newMatch, play, WINS_NEEDED, type Match } from './game/match';
-import { rivalPick, wasRead } from './game/rival';
+import { readFacts, rivalPick, wasRead } from './game/rival';
 import { MOVES, verdict, type Move } from './game/rules';
 import { afterMatch, afterRound, BADGES, type Badge, type Stats } from './game/stats';
 import { load, save } from './game/storage';
 import { createSound } from './sound/sound';
 import { runLoader } from './ui/chant';
-import { BADGE_TEXT } from './ui/copy';
+import { BADGE_TEXT, readOut, sentence } from './ui/copy';
 import { createQueue } from './ui/queue';
-import { coin, face, hand, ring, ringArc, type Mood } from './ui/parts';
+import { coin, face, hand, hint, ring, ringArc, type Mood } from './ui/parts';
 
 const SEAL_MS = 600;
 const IDLE_MS = 20_000;
@@ -203,7 +203,7 @@ export function start() {
     const extra = $('#extra');
     extra.innerHTML = '';
     if (match.phase !== 'over' && wasRead(match.rounds, reads)) {
-      extra.innerHTML = `<span class="hint">● mix it up: it learns your last five moves</span>`;
+      extra.innerHTML = hint(['mix it up: it learns your last five moves']);
       replay(extra.firstElementChild!, 'drop');
     }
 
@@ -226,9 +226,11 @@ export function start() {
     slot.hidden = false;
     replay(slot, 'coin-drop');
     window.setTimeout(() => sound.play(won ? 'fanfare' : 'lose'), 480);
-    $('#extra').innerHTML = `<button type="button" class="again" data-again>Play again · Enter</button>`;
+    const told = readOut(readFacts(reads, yourMoves));
+    $('#extra').innerHTML = `<div class="match-end">${hint(told)}<button type="button" class="again" data-again>Play again · Enter</button></div>`;
+    replay($('#extra .hint'), 'drop');
     earn(result.earned);
-    announce(`${won ? 'You won the match' : 'The rival won the match'}, ${match.youWins} to ${match.rivalWins}.`);
+    announce(`${won ? 'You won the match' : 'The rival won the match'}, ${match.youWins} to ${match.rivalWins}. ${sentence(told)}`);
   }
 
   function shuffleRival() {
