@@ -227,7 +227,7 @@ export function start() {
     replay(slot, 'coin-drop');
     window.setTimeout(() => sound.play(won ? 'fanfare' : 'lose'), 480);
     const told = readOut(readFacts(reads, yourMoves));
-    $('#extra').innerHTML = `<div class="match-end">${hint(told)}<button type="button" class="again" data-again>Play again · Enter</button></div>`;
+    $('#extra').innerHTML = `<div class="match-end">${hint(told)}<button type="button" class="again" data-again>Play again<span class="key-hint"> · Enter</span></button></div>`;
     replay($('#extra .hint'), 'drop');
     earn(result.earned);
     announce(`${won ? 'You won the match' : 'The rival won the match'}, ${match.youWins} to ${match.rivalWins}. ${sentence(told)}`);
@@ -314,6 +314,9 @@ export function start() {
   $('#extra').addEventListener('click', (event) => {
     if ((event.target as Element).closest('[data-again]')) playAgain();
   });
+
+  // A key pressed anywhere, the loader's included (it stops the event at the window), means a keyboard: show the key names (#35).
+  window.addEventListener('keydown', () => document.documentElement.classList.add('keys-known'), { capture: true, once: true });
 
   document.addEventListener('keydown', (event) => {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
