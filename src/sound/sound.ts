@@ -1,6 +1,9 @@
 // Every moment's sound (docs/PLAN.md, "Motion and sound"), synthesized: no files, nothing to load.
-export const SOUNDS = ['tap', 'tick', 'reveal', 'win', 'lose', 'draw', 'bell', 'coin', 'fanfare'] as const;
-type SoundName = (typeof SOUNDS)[number];
+export const SOUNDS = ['tap', 'tick', 'reveal', 'win', 'lose', 'draw', 'bell', 'coin', 'fanfare', 'chant1', 'chant2', 'chant3'] as const;
+export type SoundName = (typeof SOUNDS)[number];
+
+// The loader's count (board R-04): one low tick per beat, a step higher each time.
+const CHANT_PITCH = { chant1: 330, chant2: 392, chant3: 494 } as const;
 type Note = { from: number; to?: number; at: number; length: number; gain: number; wave: OscillatorType };
 
 const C5 = 523.25;
@@ -30,6 +33,10 @@ export function tone(name: SoundName): Note[] {
       return [{ from: C6, to: C6 * 0.98, at: 0, length: 0.4, gain: 0.05, wave: 'sine' }];
     case 'coin':
       return [{ from: 988, at: 0, length: 0.07, gain: 0.06, wave: 'square' }, { from: 1319, at: 0.07, length: 0.22, gain: 0.06, wave: 'square' }];
+    case 'chant1':
+    case 'chant2':
+    case 'chant3':
+      return [{ from: CHANT_PITCH[name], at: 0, length: 0.08, gain: 0.05, wave: 'square' }];
     case 'fanfare':
       return [C5, E5, G5, C6].map((from, i) => ({ from, at: i * 0.12, length: i === 3 ? 0.4 : 0.11, gain: 0.07, wave: 'triangle' as const }));
   }

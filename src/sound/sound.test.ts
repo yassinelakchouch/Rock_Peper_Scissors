@@ -30,3 +30,9 @@ test('the fanfare climbs to its last note', () => {
   const pitches = notes.map((note) => note.from);
   expect(Math.max(...pitches)).toBe(pitches.at(-1));
 });
+
+test('the loader’s count climbs a step on each beat', () => {
+  const pitches = (['chant1', 'chant2', 'chant3'] as const).map((name) => tone(name)[0].from);
+  expect(pitches).toEqual([330, 392, 494]);
+});
+
