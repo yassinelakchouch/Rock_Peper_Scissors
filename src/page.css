@@ -161,10 +161,16 @@
       background-color 180ms ease;
   }
 
+  /* #35: key names stay hidden until a key is pressed, so a phone never shows keys it does not have; the space is kept so nothing moves when they appear. */
   .key-hint {
+    visibility: hidden;
     font-family: var(--font-mono);
     font-size: 12px;
     color: var(--color-muted);
+  }
+
+  .keys-known .key-hint {
+    visibility: visible;
   }
 
   @media (hover: hover) {
