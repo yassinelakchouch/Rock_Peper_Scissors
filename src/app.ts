@@ -196,13 +196,15 @@ export function start() {
 
     const roundResult = afterRound(stats, round, reading);
     stats = roundResult.stats;
-    earn(roundResult.earned);
 
     const score = `${match.youWins}–${match.rivalWins}`;
     const lead = match.youWins === match.rivalWins ? `level at ${score}` : match.youWins > match.rivalWins ? `you lead ${score}` : `the rival leads ${score}`;
     const sub = round.outcome === 'draw' ? 'no point · play the round again' : `${round.outcome === 'win' ? '+1' : 'the rival scores'} · ${lead}`;
     setLine(verdict(round.you, round.rival), sub, round.outcome === 'win');
-    announce(`${verdict(round.you, round.rival)}. ${sub.replace('·', '.')}`);
+    // Spoken apart from the sub line: "+1 · 2–0" reads aloud as symbols.
+    const said = round.outcome === 'draw' ? 'No point, play the round again.' : `${round.outcome === 'win' ? 'You score' : 'The rival scores'}, ${lead.replace('–', ' to ')}.`;
+    announce(`${verdict(round.you, round.rival)}. ${said}`);
+    earn(roundResult.earned);
     renderHistory();
     setPoint();
     if (isMatchPoint(match)) {
