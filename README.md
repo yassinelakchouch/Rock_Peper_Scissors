@@ -2,7 +2,7 @@
 
 Rock paper scissors, best of five, against a rival that learns your habits but never sees your move. Two faces react to every round, a ring fills toward the win, and a coin lands when the match is yours.
 
-It started as a 2022 side project (kept as it was in [`legacy/`](legacy/)) and was redrawn in 2026: playable by keyboard, no page reloads, our own art.
+It started as a 2022 side project, still playable as it was at [`/legacy/`](https://yassinelakchouch.github.io/Rock_Peper_Scissors/legacy/) (linked from the header as "First version"), and was redrawn in 2026: playable by keyboard, no page reloads, our own art.
 
 ## Play
 
@@ -40,6 +40,6 @@ src/sound   the nine synthesized effects
 src/ui      faces, hands, the ring and coins as SVG
 src/app.ts  the page: rounds, motion, sound, keys and Stats
 e2e/        Playwright flows
-legacy/     the 2022 version
+public/legacy/  the 2022 version, served at /legacy/
 docs/       the plan
 ```
