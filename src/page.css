@@ -242,12 +242,24 @@
   }
 
   .hint {
+    max-width: 100%;
+    text-align: center;
     padding: 8px 14px;
     border: 1px solid var(--color-outline);
     border-radius: 999px;
     font-family: var(--font-mono);
     font-size: 12px;
     color: var(--color-body);
+  }
+
+  .hint-part {
+    white-space: nowrap;
+  }
+
+  .match-end {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
   }
 
   .again {
