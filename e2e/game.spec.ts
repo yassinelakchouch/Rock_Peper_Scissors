@@ -68,6 +68,16 @@ test('stats and the sound setting survive a reload', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Sound off' })).toBeVisible();
 });
 
+test('the Stats sheet names every badge and says which are earned', async ({ page }) => {
+  for (let i = 0; i < 3; i += 1) await playRound(page, 'p');
+  await page.getByRole('button', { name: 'Stats' }).click();
+  const badges = page.getByRole('list', { name: 'Badges' }).getByRole('listitem');
+  await expect(badges).toHaveCount(4);
+  await expect(badges.filter({ hasText: 'First match' })).toContainText('Earned');
+  await expect(badges.filter({ hasText: 'Clean sweep' })).toContainText('Earned');
+  await expect(badges.filter({ hasText: 'Comeback' })).toContainText('Not yet');
+});
+
 test('on a phone nothing scrolls sideways and every key is at least 44 px', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'phone layout');
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
