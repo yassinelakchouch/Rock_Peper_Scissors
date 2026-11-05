@@ -15,7 +15,7 @@ export const CHANT_MS = 2200;
 export const STAGE = { width: 720, height: 420 };
 export const stageUnit = (width: number, height: number) => Math.min(width / STAGE.width, height / STAGE.height);
 
-// The arena's own ring and face; in the count the rival thinks with its question mark (frame 05), at rest both are at ease (frame 06).
+// The arena's own ring and face; at "shoot!" the rival thinks with its question mark (frame 05).
 const ringFace = (side: 'you' | 'rival', thinking: boolean) =>
   `<span class="ring-box loader-ring" data-ring="${side}"><span class="ring-art">${ring(side)}</span>` +
   `<span class="ring-face">${face(thinking ? 'think' : 'idle')}</span>` +
@@ -23,12 +23,7 @@ const ringFace = (side: 'you' | 'rival', thinking: boolean) =>
   `</span>`;
 
 // One button over the arena, named for what it does; the chant's words are decoration for screen readers.
-export function loaderMarkup(still: boolean): string {
-  if (still) {
-    return `<button type="button" class="loader" data-still aria-label="Start the game">
-      <span class="loader-stage" aria-hidden="true"><span class="loader-title">Rock, paper, <span class="font-serif italic">rival</span></span><span class="loader-rings">${ringFace('you', false)}${ringFace('rival', false)}</span><span class="loader-pill">Play</span></span>
-    </button>`;
-  }
+export function loaderMarkup(): string {
   return `<button type="button" class="loader" aria-label="Start the game">
     <span class="loader-stage" aria-hidden="true">
       <span class="loader-fists"><span class="loader-fist" data-fist="you">${hand('rock')}</span><span class="loader-fist" data-fist="rival">${hand('rock')}</span></span>
