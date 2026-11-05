@@ -4,11 +4,13 @@ import { CHANT, CHANT_MS, FLY_MS, loaderMarkup, stageUnit } from './loader';
 const ARENA_OPEN = 'Best of five against the rival. Pick rock, paper or scissors.';
 
 // Board R-04, on every load: the first tap or key opens audio and starts the count; any key during it skips to the arena.
-export function runLoader(play: (name: SoundName) => void, ready: () => void) {
+// With motion off (board R-05 · #33) the same count runs calm: a fist lights up instead of rising, the rings fade in instead of the arc.
+export function runLoader(play: (name: SoundName) => void, ready: () => void, muted: () => boolean) {
   const root = document.documentElement;
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  document.body.insertAdjacentHTML('beforeend', loaderMarkup(still));
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.body.insertAdjacentHTML('beforeend', loaderMarkup());
   const loader = document.querySelector<HTMLButtonElement>('.loader')!;
+  loader.classList.toggle('loader-calm', calm);
   const word = loader.querySelector<HTMLElement>('.loader-word');
   const sub = loader.querySelector<HTMLElement>('.loader-sub');
   const fists = loader.querySelector<HTMLElement>('.loader-fists');
@@ -31,7 +33,7 @@ export function runLoader(play: (name: SoundName) => void, ready: () => void) {
     window.setTimeout(() => loader.remove(), 200);
     // The arena takes over: its keys rise in 60 ms apart and it says what it is (rules, board R-04).
     const keys = document.querySelector('#keys');
-    if (keys && !still) {
+    if (keys && !calm) {
       keys.classList.add('keys-rise');
       window.setTimeout(() => keys.classList.remove('keys-rise'), 700);
     }
@@ -42,6 +44,7 @@ export function runLoader(play: (name: SoundName) => void, ready: () => void) {
 
   // Frame 05: each fist leaves the count where it stands and arcs into its ring as the rings open around "shoot!".
   const shoot = () => {
+    if (calm) return loader.classList.add('loader-shoot');
     const flying = [...loader.querySelectorAll<HTMLElement>('.loader-fist')].map((fist) => {
       const r = fist.getBoundingClientRect();
       const copy = fist.cloneNode(true) as HTMLElement;
@@ -72,10 +75,10 @@ export function runLoader(play: (name: SoundName) => void, ready: () => void) {
     });
   };
 
-  // Frames 02-04: one fist rises on each beat, the rival's first, while the other rests; "tick" names what you hear; the last beat tightens the stage.
+  // Frames 02-04: one fist rises on each beat, the rival's first, while the other rests; "tick" names what you hear, so Sound off shows none; the last beat tightens the stage.
   const beat = (step: (typeof CHANT)[number], index: number) => {
     if (word) word.textContent = step.word;
-    if (sub) sub.textContent = 'tick';
+    if (sub) sub.textContent = muted() ? '' : 'tick';
     if (fists) fists.dataset.beat = String((index + 1) % 2);
     loader.classList.toggle('loader-tight', index === CHANT.length - 2);
     play(step.sound);
@@ -85,7 +88,6 @@ export function runLoader(play: (name: SoundName) => void, ready: () => void) {
   const begin = () => {
     if (state === 'chanting') return finish();
     if (state !== 'waiting') return;
-    if (still) return finish();
     state = 'chanting';
     loader.classList.add('loader-chanting');
     CHANT.forEach((step, index) => timers.push(window.setTimeout(() => beat(step, index), step.at)));

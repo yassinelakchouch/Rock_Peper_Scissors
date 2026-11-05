@@ -355,5 +355,5 @@ export function start() {
   renderStats();
   setPhase();
   resetIdle();
-  runLoader((name) => sound.play(name), () => keys[0].focus());
+  runLoader((name) => sound.play(name), () => keys[0].focus(), () => sound.muted);
 }

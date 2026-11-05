@@ -491,7 +491,7 @@ html.chant body > div:first-child {
 
 .loader-sub {
   font-family: var(--font-mono);
-  font-size: max(11px, calc(13px * var(--u)));
+  font-size: max(12px, calc(13px * var(--u)));
   color: var(--color-muted);
 }
 
@@ -552,25 +552,31 @@ html.chant body > div:first-child {
   pointer-events: none;
 }
 
-/* Frame 06, motion off: the title, two rings at ease, and Play. */
-.loader[data-still] .loader-stage {
-  gap: calc(16px * var(--u));
+/* Board R-05 · #33, motion off: the same count with nothing travelling; a fist lights up instead of rising, the rings fade in instead of the arc. */
+.loader-calm .loader-fists {
+  animation: none;
 }
 
-.loader-title {
-  font-family: var(--font-display);
-  font-size: max(26px, calc(40px * var(--u)));
-  font-weight: 600;
-  letter-spacing: -0.03em;
+.loader-calm .loader-fists [data-fist] {
+  transform: none;
+  transition: opacity 0.12s linear;
 }
 
-.loader-rings {
-  display: flex;
-  gap: calc(24px * var(--u));
+.loader-calm .loader-fists[data-beat='0'] [data-fist='rival'],
+.loader-calm .loader-fists[data-beat='1'] [data-fist='you'] {
+  opacity: 0.4;
 }
 
-.loader-rings .ring-box {
-  width: calc(120px * var(--u));
+.loader-calm .loader-word {
+  animation-name: loader-calm-fade;
+}
+
+.loader-calm.loader-shoot .loader-row .loader-ring {
+  animation: loader-calm-fade 0.15s linear both;
+}
+
+.loader-calm.loader-shoot .loader-row .face g {
+  animation: none;
 }
 
 /* After the count, the arena's keys rise in, 60 ms apart. */
@@ -596,6 +602,12 @@ html.chant body > div:first-child {
   from {
     opacity: 0;
     transform: translateY(8px);
+  }
+}
+
+@keyframes loader-calm-fade {
+  from {
+    opacity: 0;
   }
 }
 
