@@ -68,6 +68,11 @@ test('stats and the sound setting survive a reload', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Sound off' })).toBeVisible();
 });
 
+test('a round is read out in words, not symbols', async ({ page }) => {
+  await playRound(page, 'p');
+  await expect(page.locator('#live')).toHaveText('Paper covers rock. You score, you lead 1 to 0.');
+});
+
 test('screen readers hear match point, the match and each badge', async ({ page }) => {
   const live = page.locator('#live');
   for (let i = 0; i < 2; i += 1) await playRound(page, 'p');
