@@ -27,6 +27,11 @@
         if (!document.querySelector('.loader')) document.documentElement.classList.remove('chant');
       }, 3000);
     </script>
+    <style>
+      /* Painted before any stylesheet arrives (locally Vite delivers page.css from the script): the dark ground, and no arena until the loader covers it. */
+      html { background: #0b0c0d; }
+      html.chant body > div:first-child { visibility: hidden; }
+    </style>
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body class="min-h-dvh bg-ground font-display text-cream antialiased">
