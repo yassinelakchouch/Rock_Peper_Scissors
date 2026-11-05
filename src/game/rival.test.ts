@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { mostPlayed, rivalPick, wasRead } from './rival';
+import { mostPlayed, readFacts, rivalPick, wasRead } from './rival';
 import type { Move } from './rules';
 
 // A random source that returns the given values in turn.
@@ -43,4 +43,12 @@ describe('the rival read you', () => {
   test('three rounds lost to its read, in a row', () => expect(wasRead([won, lost, lost, lost], [false, true, true, true])).toBe(true));
   test('not when one of them was a random pick', () => expect(wasRead([lost, lost, lost], [true, false, true])).toBe(false));
   test('not with fewer than three rounds', () => expect(wasRead([lost, lost], [true, true])).toBe(false));
+});
+
+describe('what the rival read this match', () => {
+  test('counts its reads and names a habit only at three or more of your last five', () => {
+    expect(readFacts([false, false, false], ['rock', 'paper', 'rock'])).toEqual({ reads: 0, habit: null });
+    expect(readFacts([false, true], ['rock', 'paper', 'scissors', 'paper', 'rock'])).toEqual({ reads: 1, habit: null });
+    expect(readFacts([true, false, true, true], ['scissors', 'rock', 'rock', 'paper', 'rock', 'rock'])).toEqual({ reads: 3, habit: { move: 'rock', times: 4, of: 5 } });
+  });
 });
