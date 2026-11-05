@@ -20,6 +20,14 @@ describe('loader', () => {
     expect(html).toContain('Tap or press any key');
   });
 
+  it('holds frame 05: the arena’s two rings with faces, the rival thinking with its question mark', () => {
+    const html = loaderMarkup(false);
+    expect(html.split('class="ring-box loader-ring"').length - 1).toBe(2);
+    expect(html).toContain('data-mood="idle"');
+    expect(html).toContain('data-mood="think"');
+    expect(html).toContain('data-content="?"');
+  });
+
   it('has a still version with the two rings and Play, and no fists', () => {
     const html = loaderMarkup(true);
     expect(html).toContain('data-still');
