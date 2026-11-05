@@ -1,6 +1,6 @@
 # Rock, paper, rival: the plan
 
-The 2022 game (kept in `legacy/`) reloaded the page after every round, made its moves out of bare SVG icons a keyboard couldn't reach, and on a phone clipped two of the three moves off screen. This rebuild keeps it one small page and gives a match a reason to be played again: two faces that react, a ring that fills toward the win, and a rival that learns your habits but never sees your move.
+The 2022 game (kept in `public/legacy/`, playable at `/legacy/`) reloaded the page after every round, made its moves out of bare SVG icons a keyboard couldn't reach, and on a phone clipped two of the three moves off screen. This rebuild keeps it one small page and gives a match a reason to be played again: two faces that react, a ring that fills toward the win, and a rival that learns your habits but never sees your move.
 
 The design lives on the Design canvas, page "Other personal project": R-01 (study), R-02 (storyboard), R-03 (hi-fi and parts).
 
@@ -44,6 +44,7 @@ The design lives on the Design canvas, page "Other personal project": R-01 (stud
 
 | Moment | Motion | Sound |
 | --- | --- | --- |
+| Opening the page (board R-04) | two fists pump; after a tap they take turns on "Rock… Paper… Scissors…", close in, then fly into the two rings on "shoot!"; reduced motion shows the rings and Play | three rising ticks, then the reveal whoosh |
 | Hover, focus | the key lifts with an orange ring; your face starts to think | none |
 | Press | the key sinks | a soft tap |
 | Your pick | your hand drops into its badge with a small bounce | tap |
