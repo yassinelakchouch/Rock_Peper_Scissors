@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { MOVES } from '../game/rules';
-import { CIRCUMFERENCE, coin, face, hand, MOODS, ring, ringArc } from './parts';
+import { CIRCUMFERENCE, coin, face, hand, hint, MOODS, ring, ringArc } from './parts';
 
 describe('the ring fills a third per round won', () => {
   test('empty at 0', () => expect(ringArc(0).dash).toBe(0));
@@ -41,4 +41,12 @@ describe('the drawings', () => {
   });
   test('every drawing hides itself from screen readers; the page speaks the result', () =>
     [face('idle'), hand('rock'), coin(), ring('you')].forEach((svg) => expect(svg).toContain('aria-hidden="true"')));
+});
+
+describe('the hint pill', () => {
+  test('starts with the dot and wraps only between its parts', () => {
+    const html = hint(['it read you 3 times', 'you lean on rock, 4 of your last 5']);
+    expect(html.split('class="hint-part"').length - 1).toBe(2);
+    expect(html).toContain('● it read you 3 times ·</span> <span class="hint-part">you lean on rock');
+  });
 });
