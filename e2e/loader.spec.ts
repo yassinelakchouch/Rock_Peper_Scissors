@@ -111,3 +111,14 @@ test('with reduced motion the count runs calm (board R-05 · #33): a fist lights
   await expect(page.locator('#live')).toHaveText('Best of five against the rival. Pick rock, paper or scissors.');
   await expect(page.locator('#keys')).not.toHaveClass(/keys-rise/);
 });
+
+test('before any stylesheet arrives, the first paint is the dark ground with no arena (#37)', async ({ page }) => {
+  await page.route((url) => url.pathname.endsWith('/src/main.ts'), (route) => route.abort());
+  await page.goto('/');
+  const first = await page.evaluate(() => ({
+    ground: getComputedStyle(document.documentElement).backgroundColor,
+    arena: getComputedStyle(document.querySelector('body > div')!).visibility,
+  }));
+  expect(first).toEqual({ ground: 'rgb(11, 12, 13)', arena: 'hidden' });
+});
+

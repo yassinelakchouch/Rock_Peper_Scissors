@@ -396,10 +396,6 @@
 
 /* ---------- board R-04: the loading chant ---------- */
 /* Every size is the board's number at its 720x420 frame times --u (set from the screen), so the loader keeps the board's proportions. */
-html.chant body > div:first-child {
-  visibility: hidden;
-}
-
 .loader {
   --u: 1;
   position: fixed;
