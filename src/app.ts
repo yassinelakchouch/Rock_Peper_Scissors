@@ -5,6 +5,7 @@ import { afterMatch, afterRound, BADGES, type Badge, type Stats } from './game/s
 import { load, save } from './game/storage';
 import { createSound } from './sound/sound';
 import { BADGE_TEXT } from './ui/copy';
+import { createQueue } from './ui/queue';
 import { coin, face, hand, ring, ringArc, type Mood } from './ui/parts';
 
 const SEAL_MS = 600;
@@ -32,8 +33,6 @@ export function start() {
   let match: Match = newMatch(pick.move);
   let shuffle = 0;
   let idle = 0;
-  const toasts: Badge[] = [];
-  let toastBusy = false;
 
   const arena = $('#arena');
   const side = (name: 'you' | 'rival') => $(`[data-side="${name}"]`, arena);
@@ -146,13 +145,7 @@ export function start() {
   }
 
   // ---------- badges ----------
-  function showNextBadge() {
-    const badge = toasts.shift();
-    if (!badge) {
-      toastBusy = false;
-      return;
-    }
-    toastBusy = true;
+  const toasts = createQueue<Badge>((badge, done) => {
     const { coin: label, name, why } = BADGE_TEXT[badge];
     const toast = $('#toast');
     toast.innerHTML = `<span class="toast-coin">${coin(label)}</span><span class="grid gap-0.5"><strong>Badge · ${name}</strong><span class="font-mono text-xs text-muted">${why}</span></span>`;
@@ -161,15 +154,14 @@ export function start() {
     sound.play('coin');
     window.setTimeout(() => {
       toast.hidden = true;
-      showNextBadge();
+      done();
     }, 3000);
-  }
+  });
 
   function earn(badges: Badge[]) {
     badges.forEach((badge) => announce(`Badge earned: ${BADGE_TEXT[badge].name}.`));
-    toasts.push(...badges);
     if (badges.length) renderStats();
-    if (!toastBusy) showNextBadge();
+    toasts.push(...badges);
   }
 
   // ---------- the round ----------
