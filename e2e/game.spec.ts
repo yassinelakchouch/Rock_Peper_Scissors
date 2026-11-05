@@ -4,6 +4,7 @@ import { expect, test, type Page } from '@playwright/test';
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     Math.random = () => 0.1;
+    sessionStorage.setItem('rps-project002:loaded', '1');
   });
   await page.goto('/');
 });

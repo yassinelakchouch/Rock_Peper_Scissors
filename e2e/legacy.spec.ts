@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+// The loading chant plays once a visit; these flows start where it hands over, at the arena.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('rps-project002:loaded', '1'));
+});
+
 test('the first version still plays at legacy/index.html, with every file found and no script error', async ({ page }) => {
   const problems: string[] = [];
   page.on('response', (r) => r.status() >= 400 && problems.push(`${r.status()} ${r.url()}`));

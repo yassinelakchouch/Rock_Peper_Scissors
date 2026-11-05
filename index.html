@@ -20,6 +20,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@1&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" />
+    <script>
+      // Board R-04: the arena stays hidden until the loader covers it, once a visit; if the loader never comes, it shows anyway.
+      try {
+        if (sessionStorage.getItem('rps-project002:loaded') !== '1') {
+          document.documentElement.classList.add('chant');
+          setTimeout(function () {
+            if (!document.querySelector('.loader')) document.documentElement.classList.remove('chant');
+          }, 3000);
+        }
+      } catch (e) {}
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body class="min-h-dvh bg-ground font-display text-cream antialiased">
