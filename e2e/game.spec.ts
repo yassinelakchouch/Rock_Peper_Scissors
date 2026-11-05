@@ -108,3 +108,19 @@ test('after a match the rival says how it read you (board R-05 · #29)', async (
   await expect(page.locator('#extra .hint')).toHaveText('● it read you 3 times · you lean on rock, 5 of your last 5');
   await expect(page.locator('#live')).toContainText('It read you 3 times; you lean on rock, 5 of your last 5.');
 });
+
+test.describe('key names (#35)', () => {
+  test('stay hidden until a key is pressed, then show on the keys', async ({ browser }) => {
+    const page = await browser.newPage({ hasTouch: true });
+    await page.goto('/');
+    await page.locator('.loader').tap();
+    await page.locator('.loader').tap();
+    await expect(page.locator('.loader')).toHaveCount(0, { timeout: 3000 });
+    await expect(page.locator('.key-hint').first()).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Rock (R or 1)' })).toBeVisible();
+    await page.keyboard.press('Shift');
+    await expect(page.locator('.key-hint').first()).toBeVisible();
+    await page.close();
+  });
+});
+
