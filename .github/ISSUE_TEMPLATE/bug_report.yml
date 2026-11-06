@@ -1,0 +1,60 @@
+name: Bug report
+description: Something in the game doesn't work as it should.
+title: "Bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. The browser, the device and the motion setting are what make a bug reproducible here: the loader and the opening scenes run a calm path when reduced motion is on.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, in a sentence or two.
+      placeholder: After a match, Enter did not start a new one.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: From opening the page, one step per line.
+      placeholder: |
+        1. Open the page and press any key
+        2. Win a match with R, P and S
+        3. Press Enter
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      placeholder: A new match starts at 0-0.
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Safari
+        - Firefox
+        - Edge
+        - Other
+  - type: input
+    id: device
+    attributes:
+      label: Browser version and device
+      placeholder: Chrome 142 on a Pixel 7, or Safari 26 on a MacBook Air
+  - type: checkboxes
+    id: motion
+    attributes:
+      label: Reduced motion
+      description: "Windows: Animation effects off. macOS and iOS: Reduce motion. Android: Remove animations."
+      options:
+        - label: Reduced motion is on
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshot or recording
+      description: Drop an image or a short video here.
