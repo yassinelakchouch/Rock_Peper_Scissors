@@ -1,4 +1,4 @@
-import { isMatchPoint, newMatch, play, WINS_NEEDED, type Match } from './game/match';
+import { isMatchPoint, newMatch, play, winsNeeded, type Length, type Match } from './game/match';
 import { readFacts, rivalPick, wasRead } from './game/rival';
 import { MOVES, verdict, type Move } from './game/rules';
 import { afterMatch, afterRound, BADGES, type Badge, type Stats } from './game/stats';
@@ -6,9 +6,9 @@ import { load, save } from './game/storage';
 import { buzz } from './sound/buzz';
 import { createSound } from './sound/sound';
 import { runLoader } from './ui/chant';
-import { BADGE_TEXT, readOut, sentence } from './ui/copy';
+import { BADGE_TEXT, firstTo, readOut, sentence } from './ui/copy';
 import { createQueue } from './ui/queue';
-import { coin, face, hand, hint, ring, ringArc, type Mood } from './ui/parts';
+import { coin, face, hand, hint, lengthChips, ring, ringArc, type Mood } from './ui/parts';
 
 const SEAL_MS = 600;
 const IDLE_MS = 20_000;
@@ -34,14 +34,14 @@ export function start() {
   const yourMoves: Move[] = [];
   const reads: boolean[] = [];
   let pick = rivalPick(yourMoves);
-  let match: Match = newMatch(pick.move);
+  let match: Match = newMatch(pick.move, saved.length);
   let shuffle = 0;
   let idle = 0;
 
   const arena = $('#arena');
   const side = (name: 'you' | 'rival') => $(`[data-side="${name}"]`, arena);
   const keys = $$<HTMLButtonElement>('#keys .key');
-  const persist = () => save({ stats, muted: sound.muted });
+  const persist = () => save({ stats, muted: sound.muted, length: match.length });
   // Everything said in one moment (the result, match point, the match, badges) is spoken as one message, in order.
   let spoken: string[] = [];
   const announce = (text: string) => {
@@ -75,7 +75,7 @@ export function start() {
 
   function setRing(name: 'you' | 'rival', wins: number, pulse = false) {
     const art = $('.ring-svg', side(name));
-    const { dash, knob } = ringArc(wins);
+    const { dash, knob } = ringArc(wins, winsNeeded(match.length));
     const progress = $('.ring-progress', art);
     progress.setAttribute('stroke-dasharray', `${dash.toFixed(1)} 999`);
     // A round line cap draws a dot even at zero length: the empty track shows nothing.
@@ -90,10 +90,18 @@ export function start() {
   function setPoint() {
     for (const name of ['you', 'rival'] as const) {
       const wins = name === 'you' ? match.youWins : match.rivalWins;
-      const on = isMatchPoint(match) && wins === WINS_NEEDED - 1;
+      const on = isMatchPoint(match) && wins === winsNeeded(match.length) - 1;
       $('.ring-svg', side(name)).toggleAttribute('data-point', on);
       $('[data-chip]', side(name)).hidden = !on;
     }
+  }
+
+  // Match length (board R-05 · #28): the chips, and the pips and round marks that follow it.
+  function renderLength() {
+    $('#length').innerHTML = lengthChips(match.length);
+    for (const name of ['you', 'rival'] as const) $('[data-pips]', side(name)).innerHTML = '<i></i>'.repeat(winsNeeded(match.length));
+    $('#history').innerHTML = Array.from({ length: match.length }, (_, i) => `<li>${i + 1}</li>`).join('');
+    renderHistory();
   }
 
   function renderHistory() {
@@ -146,6 +154,7 @@ export function start() {
     arena.dataset.phase = match.phase;
     $('#round').textContent = match.phase === 'over' ? (match.winner === 'you' ? 'Match won' : 'Match lost') : `Round ${match.rounds.length + (match.phase === 'revealed' ? 0 : 1)}`;
     for (const key of keys) key.toggleAttribute('data-picked', match.picked === key.dataset.move && match.phase !== 'open');
+    for (const chip of $$<HTMLButtonElement>('#length button')) chip.disabled = match.phase !== 'open' || match.rounds.length > 0;
   }
 
   // ---------- badges ----------
@@ -295,7 +304,7 @@ export function start() {
   function playAgain() {
     if (match.phase !== 'over') return;
     openRound();
-    setLine('Pick your move', 'first to three wins the match');
+    setLine('Pick your move', firstTo(winsNeeded(match.length)));
     setPhase();
     keys[0].focus();
   }
@@ -353,12 +362,27 @@ export function start() {
     persist();
   });
 
+  $('#length').addEventListener('click', (event) => {
+    const chip = (event.target as Element).closest<HTMLButtonElement>('[data-length]');
+    if (!chip || chip.disabled) return;
+    match = play(match, { type: 'length', length: Number(chip.dataset.length) as Length });
+    renderLength();
+    setRing('you', 0);
+    setRing('rival', 0);
+    setLine('Pick your move', firstTo(winsNeeded(match.length)));
+    setPhase();
+    sound.play('tap');
+    persist();
+  });
+
   const dialog = $<HTMLDialogElement>('#stats');
   $('#open-stats').addEventListener('click', () => dialog.showModal());
   $('[data-close]', dialog).addEventListener('click', () => dialog.close());
 
   $('#sound').textContent = sound.muted ? 'Sound off' : 'Sound on';
   $('#sound').setAttribute('aria-pressed', String(!sound.muted));
+  renderLength();
+  setLine('Pick your move', firstTo(winsNeeded(match.length)));
   setFace('you', 'idle');
   setFace('rival', 'idle');
   setBadge('you', null);
