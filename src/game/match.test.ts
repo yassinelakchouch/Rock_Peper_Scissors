@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isMatchPoint, newMatch, play, WINS_NEEDED, type Match } from './match';
+import { DEFAULT_LENGTH, isMatchPoint, newMatch, play, winsNeeded, type Match } from './match';
 import type { Move } from './rules';
 
 // Plays whole rounds: the rival's move is sealed first, then yours, then the reveal.
@@ -38,7 +38,7 @@ describe('a round', () => {
 });
 
 describe('the match', () => {
-  test(`first to ${WINS_NEEDED} wins it`, () => {
+  test(`first to ${winsNeeded(DEFAULT_LENGTH)} wins it`, () => {
     const won = rounds(newMatch('rock'), [['paper', 'rock'], ['rock', 'paper'], ['rock', 'scissors'], ['scissors', 'paper']]);
     expect(won).toMatchObject({ phase: 'over', youWins: 3, rivalWins: 1, winner: 'you' });
   });
@@ -57,5 +57,23 @@ describe('the match', () => {
     expect(isMatchPoint(rounds(newMatch('rock'), [['paper', 'rock'], ['paper', 'rock']]))).toBe(true);
     expect(isMatchPoint(rounds(newMatch('rock'), [['paper', 'rock']]))).toBe(false);
     expect(isMatchPoint(rounds(newMatch('rock'), [['paper', 'rock'], ['paper', 'rock'], ['paper', 'rock']]))).toBe(false);
+  });
+});
+
+describe('the match length (#28)', () => {
+  test('best of 3, 5 or 7 needs 2, 3 or 4 wins', () => {
+    expect([3, 5, 7].map((n) => winsNeeded(n as 3 | 5 | 7))).toEqual([2, 3, 4]);
+    expect(rounds(newMatch('rock', 3), [['paper', 'rock'], ['paper', 'rock']])).toMatchObject({ phase: 'over', winner: 'you' });
+    const three = rounds(newMatch('rock', 7), [['paper', 'rock'], ['paper', 'rock'], ['paper', 'rock']]);
+    expect(three).toMatchObject({ phase: 'revealed', youWins: 3 });
+    expect(isMatchPoint(three)).toBe(true);
+  });
+
+  test('changes only before the first round, and play again keeps it', () => {
+    expect(play(newMatch('rock'), { type: 'length', length: 3 }).length).toBe(3);
+    const started = rounds(newMatch('rock'), [['rock', 'rock']]);
+    expect(play(started, { type: 'length', length: 7 })).toBe(started);
+    const over = rounds(newMatch('rock', 3), [['paper', 'rock'], ['paper', 'rock']]);
+    expect(play(over, { type: 'again', rival: 'paper' })).toEqual(newMatch('paper', 3));
   });
 });
