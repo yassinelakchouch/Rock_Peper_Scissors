@@ -13,6 +13,9 @@ export const sentence = (parts: readonly string[]) => `${parts.join('; ').replac
 export const BADGE_TEXT: Record<Badge, { coin: string; name: string; why: string }> = {
   'first-match': { coin: '1', name: 'First match', why: 'your first match, played to the end' },
   'clean-sweep': { coin: '3–0', name: 'Clean sweep', why: 'a match won without losing a round' },
-  comeback: { coin: '↺', name: 'Comeback', why: 'a match won after trailing 0–2' },
+  comeback: { coin: '↺', name: 'Comeback', why: 'a match won from one round from losing, with none won' },
   'mind-reader': { coin: '★', name: 'Mind reader', why: 'five rounds won against its read' },
 };
+
+const NUMBER_WORDS = ['none', 'one', 'two', 'three', 'four'];
+export const firstTo = (needed: number) => `first to ${NUMBER_WORDS[needed]} wins the match`;

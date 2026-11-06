@@ -258,6 +258,39 @@
     color: var(--color-body);
   }
 
+  .length {
+    display: inline-flex;
+    gap: 4px;
+    vertical-align: middle;
+  }
+
+  .length-chip {
+    min-width: 24px;
+    min-height: 24px;
+    padding: 0 6px;
+    border: 1px solid var(--color-outline);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .length-chip[aria-pressed='true'] {
+    border-color: var(--color-cream);
+    background: var(--color-cream);
+    color: var(--color-ground);
+  }
+
+  .length-chip:disabled {
+    cursor: default;
+  }
+
+  .length-chip:disabled:not([aria-pressed='true']) {
+    opacity: 0.4;
+  }
+
   .hint-part {
     white-space: nowrap;
   }

@@ -140,3 +140,19 @@ test('a round won buzzes twice where phones can vibrate, and Sound off keeps it 
   expect(await buzzes()).toHaveLength(1);
 });
 
+test('best of 3 before round 1: two pips, three marks, two wins take it; the chips lock, and the choice is kept (#28)', async ({ page }) => {
+  await page.getByRole('button', { name: 'Best of 3' }).click();
+  await expect(page.getByRole('button', { name: 'Best of 3' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-side="you"] [data-pips] i')).toHaveCount(2);
+  await expect(marks(page)).toHaveCount(3);
+  await expect(page.locator('#sub')).toHaveText('first to two wins the match');
+  await playRound(page, 'p');
+  await expect(page.getByRole('button', { name: 'Best of 7' })).toBeDisabled();
+  await playRound(page, 'p');
+  await expect(line(page)).toHaveText('You won 2–0');
+  await page.reload();
+  await passLoader(page);
+  await expect(page.getByRole('button', { name: 'Best of 3' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Best of 3' })).toBeEnabled();
+});
+
