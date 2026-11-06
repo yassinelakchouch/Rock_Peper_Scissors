@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { readOut, sentence } from './copy';
+import { firstTo, readOut, sentence } from './copy';
 
 describe('the read-out after a match', () => {
   test('says the rival only guessed when it never read you', () => {
@@ -15,4 +15,8 @@ describe('the read-out after a match', () => {
   test('is one sentence for screen readers', () => {
     expect(sentence(['it read you once', 'no habit stood out'])).toBe('It read you once; no habit stood out.');
   });
+});
+
+test('the open line names the wins the match length needs (#28)', () => {
+  expect([2, 3, 4].map(firstTo)).toEqual(['first to two wins the match', 'first to three wins the match', 'first to four wins the match']);
 });
