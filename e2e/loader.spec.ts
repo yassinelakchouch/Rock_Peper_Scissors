@@ -1,6 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
+import { skipIntro } from './helpers';
 
 const loader = (page: Page) => page.getByRole('button', { name: 'Start the game' });
+
+// These specs end at the arena; the opening scenes after it are intro.spec.ts's.
+test.beforeEach(({ page }) => skipIntro(page));
 
 // A stand-in AudioContext that writes down each tone, so a flow can hear the count.
 async function listen(page: Page) {
