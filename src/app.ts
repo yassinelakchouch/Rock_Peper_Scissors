@@ -2,17 +2,23 @@ import { isMatchPoint, newMatch, play, winsNeeded, type Length, type Match } fro
 import { readFacts, rivalPick, wasRead } from './game/rival';
 import { MOVES, verdict, type Move } from './game/rules';
 import { afterMatch, afterRound, BADGES, type Badge, type Stats } from './game/stats';
-import { load, save } from './game/storage';
+import { introSeen, load, markIntroSeen, save } from './game/storage';
 import { buzz } from './sound/buzz';
 import { createSound } from './sound/sound';
 import { runLoader } from './ui/chant';
-import { BADGE_TEXT, firstTo, readOut, sentence } from './ui/copy';
+import { BADGE_TEXT, firstTo, introLines, readOut, sentence } from './ui/copy';
+import { createIntro } from './ui/intro';
 import { createQueue } from './ui/queue';
-import { coin, face, hand, hint, lengthChips, ring, ringArc, type Mood } from './ui/parts';
+import { coin, face, hand, hint, introBar, lengthChips, ring, ringArc, type Mood } from './ui/parts';
 
 const SEAL_MS = 600;
 const IDLE_MS = 20_000;
 const SHUFFLE_MS = 150;
+// Board R-06: each opening scene holds this long (longer when nothing moves); Space right after the loader is ignored.
+const SCENE_MS = 2200;
+const SCENE_CALM_MS = 2600;
+const SCENE_QUIET_MS = 600;
+const SCENES = 4;
 const KEY_MOVES: Record<string, Move> = { r: 'rock', '1': 'rock', p: 'paper', '2': 'paper', s: 'scissors', '3': 'scissors' };
 
 const $ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector)!;
@@ -283,6 +289,7 @@ export function start() {
   }
 
   function choose(move: Move) {
+    if (intro.running) intro.stop('play');
     resetIdle();
     if (match.phase === 'sealed') {
       replay($(`.key[data-move="${move}"]`), 'nudge');
@@ -323,6 +330,99 @@ export function start() {
     }, IDLE_MS);
   }
 
+  // ---------- the opening scenes (board R-06): the arena acts a round out, then hands over ----------
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let introAt = 0;
+
+  function showScene(index: number) {
+    const needed = winsNeeded(match.length);
+    const lines = introLines(needed);
+    $('#intro').innerHTML = introBar(index, SCENES);
+    keys.forEach((key) => key.toggleAttribute('data-demo', index === 0 && key.dataset.move === 'paper'));
+    if (index === 0) {
+      setFace('you', 'think', !calm);
+      setLine('Pick your move', firstTo(needed));
+    } else if (index === 1) {
+      setBadge('you', 'paper', calm ? undefined : 'drop');
+      setFace('you', 'idle');
+      setFace('rival', 'think', !calm);
+      setBadge('rival', '?', calm ? undefined : 'drop');
+      setLine('Rival is picking…', 'it chose before you did: it reads your history, never this move');
+    } else if (index === 2) {
+      setBadge('you', 'paper');
+      setBadge('rival', 'rock', calm ? undefined : 'flip');
+      setFace('you', 'win', !calm);
+      setFace('rival', 'lose', !calm);
+      setRing('you', 1, !calm);
+      setLine(verdict('paper', 'rock'), '+1 · you lead 1–0', true);
+    } else {
+      setRing('you', needed, !calm);
+      setFace('you', 'win');
+      setFace('rival', 'lose');
+      const slot = $('[data-coin]', side('you'));
+      slot.innerHTML = coin();
+      slot.hidden = false;
+      if (!calm) replay(slot, 'coin-drop');
+      setLine(`You won ${needed}–1`, 'badges and streaks go to Stats', true);
+    }
+    $('#extra').innerHTML = hint(lines[index]);
+    announce(sentence(lines[index]));
+  }
+
+  // The scenes only borrowed the arena: it goes back to the match as it was, ready for a hand.
+  function restoreArena() {
+    keys.forEach((key) => key.removeAttribute('data-demo'));
+    $('#intro').hidden = true;
+    $('#intro').innerHTML = '';
+    for (const name of ['you', 'rival'] as const) $('[data-coin]', side(name)).hidden = true;
+    if (match.phase === 'over') {
+      playAgain();
+      return;
+    }
+    setBadge('you', null);
+    setBadge('rival', null);
+    setFace('you', 'idle');
+    setFace('rival', 'idle');
+    setRing('you', match.youWins);
+    setRing('rival', match.rivalWins);
+    $('#extra').innerHTML = '';
+    renderHistory();
+    setPoint();
+    setLine('Pick your move', firstTo(winsNeeded(match.length)));
+    setPhase();
+  }
+
+  const intro = createIntro({
+    count: SCENES,
+    hold: calm ? SCENE_CALM_MS : SCENE_MS,
+    show: showScene,
+    end: (reason) => {
+      markIntroSeen();
+      restoreArena();
+      resetIdle();
+      if (reason === 'play') return;
+      // The way back is marked once, then left alone.
+      const how = $('#how');
+      how.dataset.ring = '';
+      window.setTimeout(() => delete how.dataset.ring, 2400);
+      keys[0].focus();
+    },
+  });
+
+  function playIntro() {
+    if (intro.running || match.phase === 'sealed') return;
+    window.clearTimeout(idle);
+    $('#intro').hidden = false;
+    introAt = performance.now();
+    intro.start();
+    keys[0].focus();
+  }
+
+  $('#intro').addEventListener('click', (event) => {
+    if ((event.target as Element).closest('[data-skip]')) intro.stop('skip');
+  });
+  $('#how').addEventListener('click', playIntro);
+
   // ---------- wiring ----------
   for (const key of keys) {
     key.addEventListener('click', () => choose(key.dataset.move as Move));
@@ -340,6 +440,20 @@ export function start() {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     const dialog = $<HTMLDialogElement>('#stats');
     if (dialog.open) return;
+    if (intro.running) {
+      const step = { ' ': 'next', ArrowRight: 'next', ArrowLeft: 'back' }[event.key];
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        intro.stop('skip');
+        return;
+      }
+      if (step) {
+        event.preventDefault();
+        // The Space that closed the loader must not also skip a scene.
+        if (performance.now() - introAt > SCENE_QUIET_MS) intro[step as 'next' | 'back']();
+        return;
+      }
+    }
     if (event.key === 'Enter' && match.phase === 'over') {
       event.preventDefault();
       playAgain();
@@ -365,6 +479,7 @@ export function start() {
   $('#length').addEventListener('click', (event) => {
     const chip = (event.target as Element).closest<HTMLButtonElement>('[data-length]');
     if (!chip || chip.disabled) return;
+    if (intro.running) intro.stop('skip');
     match = play(match, { type: 'length', length: Number(chip.dataset.length) as Length });
     renderLength();
     setRing('you', 0);
@@ -393,5 +508,5 @@ export function start() {
   renderStats();
   setPhase();
   resetIdle();
-  runLoader((name) => sound.play(name), () => keys[0].focus(), () => sound.muted);
+  runLoader((name) => sound.play(name), () => (introSeen() ? keys[0].focus() : playIntro()), () => sound.muted);
 }
