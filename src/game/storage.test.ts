@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { EMPTY_STATS } from './stats';
-import { load, save } from './storage';
+import { introSeen, load, markIntroSeen, save } from './storage';
 
 const memory = () => {
   const items = new Map<string, string>();
@@ -43,4 +43,14 @@ test('a visit saved before the match length keeps its stats and plays best of fi
   expect(load(store)).toMatchObject({ stats: { matches: 2 }, length: 5 });
   store.setItem('rps-project002', JSON.stringify({ stats: EMPTY_STATS, muted: false, length: 9 }));
   expect(load(store).length).toBe(5);
+});
+
+test('the opening scenes are remembered once seen, and a blocked store never throws', () => {
+  const store = memory();
+  expect(introSeen(store)).toBe(false);
+  markIntroSeen(store);
+  expect(introSeen(store)).toBe(true);
+  const blocked = { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } };
+  expect(introSeen(blocked)).toBe(false);
+  expect(() => markIntroSeen(blocked)).not.toThrow();
 });
