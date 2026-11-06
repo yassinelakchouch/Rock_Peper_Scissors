@@ -9,6 +9,7 @@ It started as a 2022 side project, still playable as it was at [`/legacy/`](http
 | Do | What happens |
 | --- | --- |
 | Open the page, then tap or press any key | The loading chant: the fists count "Rock… Paper… Scissors…" with rising ticks, then fly into the two rings on "shoot!"; any key during it skips to the arena. With reduced motion: the title, the rings and Play |
+| First visit, after the chant | Four short scenes act a round out by themselves: a click, the wait, the rule, the stats. Then they leave. Any hand plays at once, Esc skips, and **How to play** in the footer brings them back |
 | Tap a key, or press 1 2 3 / R P S | Your hand drops in; the rival's sealed pick shuffles for 0.6 s, then both flip |
 | Win a round | Your ring fills a third; three wins take the match |
 | Reach 2 wins | MATCH POINT, and the ring breathes |
