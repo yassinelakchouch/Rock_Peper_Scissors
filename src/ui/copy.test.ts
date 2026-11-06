@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { firstTo, readOut, sentence } from './copy';
+import { firstTo, introLines, readOut, sentence } from './copy';
 
 describe('the read-out after a match', () => {
   test('says the rival only guessed when it never read you', () => {
@@ -19,4 +19,14 @@ describe('the read-out after a match', () => {
 
 test('the open line names the wins the match length needs (#28)', () => {
   expect([2, 3, 4].map(firstTo)).toEqual(['first to two wins the match', 'first to three wins the match', 'first to four wins the match']);
+});
+
+describe('the opening scenes say the rules once each (board R-06)', () => {
+  test('four scenes; the last names the match length chosen', () => {
+    const lines = introLines(2);
+    expect(lines).toHaveLength(4);
+    expect(lines[2]).toEqual(['paper covers rock', 'rock breaks scissors', 'scissors cut paper']);
+    expect(lines[3][0]).toBe('first to two wins the match');
+    expect(sentence(lines[1])).toBe('The rival picked first; it never sees your move.');
+  });
 });

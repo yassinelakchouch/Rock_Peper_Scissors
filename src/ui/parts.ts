@@ -78,3 +78,9 @@ export const hint = (parts: readonly string[]) =>
 // Match length (board R-05 · #28): three toggle chips after "BEST OF", disabled once the match starts.
 export const lengthChips = (length: Length) =>
   `<span class="length" role="group" aria-label="Match length">${LENGTHS.map((n) => `<button type="button" class="length-chip" data-length="${n}" aria-pressed="${n === length}" aria-label="Best of ${n}">${n}</button>`).join('')}</span>`;
+
+// The opening scenes (board R-06): where they are and the way out, on every scene.
+export const introBar = (index: number, count: number) =>
+  `<span class="intro-label">How to play · ${index + 1}/${count}</span>` +
+  `<span class="intro-steps" aria-hidden="true">${Array.from({ length: count }, (_, i) => `<i${i <= index ? ' class="on"' : ''}></i>`).join('')}</span>` +
+  `<button type="button" class="text-link" data-skip>Skip · Esc</button>`;
