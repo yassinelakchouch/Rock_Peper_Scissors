@@ -1,3 +1,4 @@
+import { LENGTHS, type Length } from '../game/match';
 import type { Move } from '../game/rules';
 
 // Board R-03: every part drawn for this game. SVG strings sized by CSS, so one drawing serves every screen.
@@ -55,8 +56,8 @@ export const coin = (label = '★') => {
 const RADIUS = 88;
 export const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export function ringArc(wins: number) {
-  const share = Math.max(0, Math.min(3, wins)) / 3;
+export function ringArc(wins: number, needed = 3) {
+  const share = Math.max(0, Math.min(needed, wins)) / needed;
   const angle = ((135 + 270 * share) * Math.PI) / 180;
   return { dash: CIRCUMFERENCE * 0.75 * share, knob: { x: 100 + RADIUS * Math.cos(angle), y: 100 + RADIUS * Math.sin(angle) } };
 }
@@ -73,3 +74,7 @@ export const ring = (side: 'you' | 'rival') =>
 // The rival's voice, mid-match and after it (board R-05 · #29): one pill that wraps only between its parts.
 export const hint = (parts: readonly string[]) =>
   `<span class="hint">${parts.map((part, i) => `<span class="hint-part">${i === 0 ? '● ' : ''}${part}${i < parts.length - 1 ? ' ·' : ''}</span>`).join(' ')}</span>`;
+
+// Match length (board R-05 · #28): three toggle chips after "BEST OF", disabled once the match starts.
+export const lengthChips = (length: Length) =>
+  `<span class="length" role="group" aria-label="Match length">${LENGTHS.map((n) => `<button type="button" class="length-chip" data-length="${n}" aria-pressed="${n === length}" aria-label="Best of ${n}">${n}</button>`).join('')}</span>`;
