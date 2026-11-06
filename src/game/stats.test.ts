@@ -8,7 +8,7 @@ const draw: Round = { you: 'rock', rival: 'rock', outcome: 'draw' };
 const over = (rounds: Round[]): Match => {
   const youWins = rounds.filter((r) => r.outcome === 'win').length;
   const rivalWins = rounds.filter((r) => r.outcome === 'lose').length;
-  return { phase: 'over', sealed: 'rock', picked: null, rounds, youWins, rivalWins, winner: youWins === 3 ? 'you' : 'rival' };
+  return { phase: 'over', sealed: 'rock', picked: null, rounds, youWins, rivalWins, winner: youWins === 3 ? 'you' : 'rival', length: 5 };
 };
 
 describe('after a match', () => {
@@ -52,4 +52,10 @@ describe('after a round', () => {
   });
   test('a win against a random pick does not count', () => expect(afterRound(EMPTY_STATS, win, false).stats.beatenReads).toBe(0));
   test('a loss to its read does not count', () => expect(afterRound(EMPTY_STATS, lose, true).stats.beatenReads).toBe(0));
+});
+
+test('a comeback follows the match length: 0–1 down in a best of 3, 0–3 down in a best of 7 (#28)', () => {
+  expect(wasComeback([lose, win, win], 2)).toBe(true);
+  expect(wasComeback([lose, lose, win, win, win], 4)).toBe(false);
+  expect(wasComeback([lose, lose, lose, win, win, win, win], 4)).toBe(true);
 });
