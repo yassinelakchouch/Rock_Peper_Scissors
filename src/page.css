@@ -677,3 +677,79 @@
     transform: translateY(24px);
   }
 }
+
+/* The opening scenes (board R-06): the bar covers the "BEST OF" line while they play, so the arena never moves. */
+@layer components {
+  .arena {
+    position: relative;
+  }
+
+  .intro {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 24px;
+    background: var(--color-ground);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-cream);
+  }
+
+  .intro[hidden] {
+    display: none;
+  }
+
+  /* The length chips are taller than the bar: while the scenes play, their line steps out entirely. */
+  .arena:has(> .intro:not([hidden])) > p:first-of-type {
+    visibility: hidden;
+  }
+
+  .intro-label {
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .intro-steps {
+    display: flex;
+    flex: 1;
+    gap: 4px;
+    min-width: 48px;
+  }
+
+  .intro-steps i {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-track);
+  }
+
+  .intro-steps i.on {
+    background: var(--color-accent);
+  }
+
+  /* A 24 px line, a 44 px target. */
+  .intro .text-link {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .intro .text-link::after {
+    content: '';
+    position: absolute;
+    inset: -10px -8px;
+  }
+
+  .key[data-demo] .key-art {
+    box-shadow: 0 0 0 3px var(--color-cream);
+  }
+
+  /* After the scenes, the way back is marked once. */
+  .text-link[data-ring] {
+    outline: 1.5px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: 999px;
+  }
+}

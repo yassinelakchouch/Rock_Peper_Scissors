@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { MOVES } from '../game/rules';
-import { CIRCUMFERENCE, coin, face, hand, hint, lengthChips, MOODS, ring, ringArc } from './parts';
+import { CIRCUMFERENCE, coin, face, hand, hint, introBar, lengthChips, MOODS, ring, ringArc } from './parts';
 
 describe('the ring fills a third per round won', () => {
   test('empty at 0', () => expect(ringArc(0).dash).toBe(0));
@@ -63,5 +63,15 @@ describe('the match length chips (#28)', () => {
   test('the ring fills by the wins the length needs', () => {
     expect(ringArc(1, 2).dash).toBeCloseTo(CIRCUMFERENCE * 0.375);
     expect(ringArc(4, 4).dash).toBeCloseTo(CIRCUMFERENCE * 0.75);
+  });
+});
+
+describe('the opening scenes bar (board R-06)', () => {
+  test('says which scene of how many, lights the steps so far and offers Skip', () => {
+    const html = introBar(1, 4);
+    expect(html).toContain('How to play · 2/4');
+    expect(html.match(/<i class="on"><\/i>/g)).toHaveLength(2);
+    expect(html.match(/<i><\/i>/g)).toHaveLength(2);
+    expect(html).toContain('<button type="button" class="text-link" data-skip>Skip · Esc</button>');
   });
 });

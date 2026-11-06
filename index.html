@@ -47,6 +47,7 @@
       <main class="grid flex-1 place-items-center px-4 pb-6">
         <div class="grid w-full max-w-[420px] items-center gap-10 lg:max-w-none lg:w-auto lg:grid-cols-[640px_340px] lg:gap-16">
           <section id="arena" class="arena" aria-label="The match" data-phase="open">
+            <div id="intro" class="intro" role="region" aria-label="How to play" hidden></div>
             <p class="font-mono text-xs text-muted">BEST OF <span id="length"></span> · <span id="round" class="text-cream">Round 1</span></p>
 
             <div class="flex items-start justify-center gap-3.5 lg:gap-12">
@@ -103,6 +104,7 @@
       <footer class="flex items-center justify-between px-4 py-4 font-mono text-xs md:px-10">
         <span class="text-muted">rps-project002</span>
         <span class="flex gap-4">
+          <button id="how" type="button" class="text-link">How to play</button>
           <button id="sound" type="button" class="text-link" aria-pressed="true">Sound on</button>
           <button id="open-stats" type="button" class="text-link">Stats</button>
         </span>

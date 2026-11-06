@@ -19,3 +19,11 @@ export const BADGE_TEXT: Record<Badge, { coin: string; name: string; why: string
 
 const NUMBER_WORDS = ['none', 'one', 'two', 'three', 'four'];
 export const firstTo = (needed: number) => `first to ${NUMBER_WORDS[needed]} wins the match`;
+
+// The opening scenes (board R-06): what each one says, in the hint pill and to screen readers.
+export const introLines = (needed: number) => [
+  ['a click on a hand plays it', 'tap, click, or R · P · S'],
+  ['the rival picked first', 'it never sees your move'],
+  ['paper covers rock', 'rock breaks scissors', 'scissors cut paper'],
+  [firstTo(needed), 'the rival learns your habits', 'badges go to Stats'],
+];
