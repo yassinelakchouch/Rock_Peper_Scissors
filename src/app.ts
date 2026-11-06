@@ -3,6 +3,7 @@ import { readFacts, rivalPick, wasRead } from './game/rival';
 import { MOVES, verdict, type Move } from './game/rules';
 import { afterMatch, afterRound, BADGES, type Badge, type Stats } from './game/stats';
 import { load, save } from './game/storage';
+import { buzz } from './sound/buzz';
 import { createSound } from './sound/sound';
 import { runLoader } from './ui/chant';
 import { BADGE_TEXT, readOut, sentence } from './ui/copy';
@@ -27,6 +28,8 @@ function replay(node: Element, className: string) {
 export function start() {
   const saved = load();
   const sound = createSound(saved.muted);
+  // The buzz follows the Sound switch and stays off with reduced motion (#30).
+  const buzzing = () => !sound.muted && !matchMedia('(prefers-reduced-motion: reduce)').matches;
   let stats: Stats = saved.stats;
   const yourMoves: Move[] = [];
   const reads: boolean[] = [];
@@ -173,7 +176,10 @@ export function start() {
     reads.push(reading);
     const round = match.rounds.at(-1)!;
     sound.play('reveal');
-    window.setTimeout(() => sound.play(round.outcome === 'win' ? 'win' : round.outcome === 'lose' ? 'lose' : 'draw'), 140);
+    window.setTimeout(() => {
+      sound.play(round.outcome === 'win' ? 'win' : round.outcome === 'lose' ? 'lose' : 'draw');
+      buzz(round.outcome, buzzing());
+    }, 140);
 
     setBadge('rival', round.rival, 'flip');
     const moods: Record<typeof round.outcome, [Mood, Mood]> = { win: ['win', 'lose'], lose: ['lose', 'smug'], draw: ['draw', 'draw'] };
@@ -225,7 +231,10 @@ export function start() {
     slot.innerHTML = `${coin()}<span class="sparkle" aria-hidden="true"></span>`;
     slot.hidden = false;
     replay(slot, 'coin-drop');
-    window.setTimeout(() => sound.play(won ? 'fanfare' : 'lose'), 480);
+    window.setTimeout(() => {
+      sound.play(won ? 'fanfare' : 'lose');
+      buzz('match', buzzing());
+    }, 480);
     const told = readOut(readFacts(reads, yourMoves));
     $('#extra').innerHTML = `<div class="match-end">${hint(told)}<button type="button" class="again" data-again>Play again<span class="key-hint"> · Enter</span></button></div>`;
     replay($('#extra .hint'), 'drop');
