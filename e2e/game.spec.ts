@@ -124,3 +124,19 @@ test.describe('key names (#35)', () => {
   });
 });
 
+test('a round won buzzes twice where phones can vibrate, and Sound off keeps it still (#30)', async ({ page }) => {
+  await page.addInitScript(() => {
+    const calls: number[][] = ((window as unknown as { buzzes: number[][] }).buzzes = []);
+    Object.defineProperty(navigator, 'vibrate', { configurable: true, value: (pattern: number[]) => calls.push(pattern) > 0 });
+  });
+  await page.reload();
+  await passLoader(page);
+  const buzzes = () => page.evaluate(() => (window as unknown as { buzzes: number[][] }).buzzes);
+  await playRound(page, 'p');
+  await expect.poll(buzzes).toEqual([[40, 60, 40]]);
+  await page.getByRole('button', { name: 'Sound on' }).click();
+  await playRound(page, 'p');
+  await page.waitForTimeout(400);
+  expect(await buzzes()).toHaveLength(1);
+});
+
