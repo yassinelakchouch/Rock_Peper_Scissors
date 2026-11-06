@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { MOVES } from '../game/rules';
-import { CIRCUMFERENCE, coin, face, hand, hint, MOODS, ring, ringArc } from './parts';
+import { CIRCUMFERENCE, coin, face, hand, hint, lengthChips, MOODS, ring, ringArc } from './parts';
 
 describe('the ring fills a third per round won', () => {
   test('empty at 0', () => expect(ringArc(0).dash).toBe(0));
@@ -48,5 +48,20 @@ describe('the hint pill', () => {
     const html = hint(['it read you 3 times', 'you lean on rock, 4 of your last 5']);
     expect(html.split('class="hint-part"').length - 1).toBe(2);
     expect(html).toContain('● it read you 3 times ·</span> <span class="hint-part">you lean on rock');
+  });
+});
+
+describe('the match length chips (#28)', () => {
+  test('three toggle buttons named for what they choose, the current one pressed', () => {
+    const html = lengthChips(3);
+    expect(html).toContain('role="group" aria-label="Match length"');
+    expect(html.split('class="length-chip"').length - 1).toBe(3);
+    expect(html).toContain('data-length="3" aria-pressed="true" aria-label="Best of 3"');
+    expect(html).toContain('data-length="5" aria-pressed="false"');
+  });
+
+  test('the ring fills by the wins the length needs', () => {
+    expect(ringArc(1, 2).dash).toBeCloseTo(CIRCUMFERENCE * 0.375);
+    expect(ringArc(4, 4).dash).toBeCloseTo(CIRCUMFERENCE * 0.75);
   });
 });
