@@ -38,10 +38,10 @@ test('every load waits for a tap, counts three beats with rising ticks, then ope
 });
 
 test('the count plays board R-04 frame by frame: one fist rises per beat, "tick", the stage tightens, "shoot!" opens two rings', async ({ page }) => {
-  // A paused clock steps through the chant's timeline, so short frames are checked on slow machines too.
+  // A paused clock steps through the chant's timeline, so short frames are checked on slow machines too; it pauses 10 s in, past even a slow load.
   await page.clock.install({ time: new Date('2026-11-05T12:00:00') });
   await page.goto('/');
-  await page.clock.pauseAt(new Date('2026-11-05T12:00:03'));
+  await page.clock.pauseAt(new Date('2026-11-05T12:00:10'));
   await loader(page).click();
   const fists = page.locator('.loader-fists');
   await page.clock.runFor(10);
@@ -93,7 +93,7 @@ test('with reduced motion the count runs calm (board R-05 · #33): a fist lights
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.clock.install({ time: new Date('2026-11-05T12:00:00') });
   await page.goto('/');
-  await page.clock.pauseAt(new Date('2026-11-05T12:00:03'));
+  await page.clock.pauseAt(new Date('2026-11-05T12:00:10'));
   await expect(page.locator('.loader')).toHaveClass(/loader-calm/);
   await expect(page.locator('.loader-fist')).toHaveCount(2);
   await loader(page).click();
