@@ -1,4 +1,4 @@
-import type { Match, Round } from './match';
+import { winsNeeded, type Match, type Round } from './match';
 
 export type Badge = 'first-match' | 'clean-sweep' | 'comeback' | 'mind-reader';
 export const BADGES: readonly Badge[] = ['first-match', 'clean-sweep', 'comeback', 'mind-reader'];
@@ -11,17 +11,17 @@ const MIND_READER_AT = 5;
 
 const earn = (stats: Stats, wanted: [Badge, boolean][]) => wanted.filter(([badge, met]) => met && !stats.badges.includes(badge)).map(([badge]) => badge);
 
-// Down 0–2 at some point, and the match still won.
-export function wasComeback(rounds: readonly Round[]): boolean {
+// One round from losing with none won (0–2 in a best of five), and the match still won.
+export function wasComeback(rounds: readonly Round[], needed = 3): boolean {
   let you = 0;
   let rival = 0;
   let behind = false;
   for (const round of rounds) {
     if (round.outcome === 'win') you += 1;
     if (round.outcome === 'lose') rival += 1;
-    if (you === 0 && rival === 2) behind = true;
+    if (you === 0 && rival === needed - 1) behind = true;
   }
-  return behind && you >= 3;
+  return behind && you >= needed;
 }
 
 export function afterMatch(stats: Stats, match: Match): { stats: Stats; earned: Badge[] } {
@@ -30,7 +30,7 @@ export function afterMatch(stats: Stats, match: Match): { stats: Stats; earned: 
   const earned = earn(stats, [
     ['first-match', true],
     ['clean-sweep', won && match.rivalWins === 0],
-    ['comeback', won && wasComeback(match.rounds)],
+    ['comeback', won && wasComeback(match.rounds, winsNeeded(match.length))],
   ]);
   return {
     stats: { ...stats, matches: stats.matches + 1, won: stats.won + (won ? 1 : 0), streak, bestStreak: Math.max(stats.bestStreak, streak), badges: [...stats.badges, ...earned] },
