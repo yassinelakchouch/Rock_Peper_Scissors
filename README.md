@@ -25,6 +25,22 @@ Rock paper scissors, best of three, five or seven, against a rival that learns y
 
 Badges: First match · Clean sweep (3–0) · Comeback (from 0–2) · Mind reader (5 rounds won against its read).
 
+## Keyboard
+
+Every key the game listens to. Keys held with Ctrl, Alt or Cmd are left to the browser, Tab moves focus everywhere, and while Stats is open the game ignores keys (Esc closes it).
+
+| Key | When | What it does |
+| --- | --- | --- |
+| Any key | Loader | Starts the count |
+| Any key again | Loader, during the count | Skips to the arena |
+| Esc, or **Skip** | Opening scenes | Skips them |
+| Space or → | Opening scenes | Steps on to the next scene |
+| ← | Opening scenes | Steps back a scene |
+| R P S, or 1 2 3 | Opening scenes | Ends them and plays that hand at once |
+| R P S, or 1 2 3 | A round | Plays rock, paper or scissors |
+| Enter | After a match | Plays again |
+| **How to play** in the footer | Arena | Replays the opening scenes |
+
 ## How it was built
 
 1. **Measured the 2021 version first**, then drew the new one on design boards: study, storyboard, screens, and later the loading chant and the opening scenes.
