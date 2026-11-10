@@ -43,7 +43,7 @@ Every key the game listens to. Keys held with Ctrl, Alt or Cmd are left to the b
 
 ## How it was built
 
-1. **Measured the 2021 version first**, then drew the new one on design boards: study, storyboard, screens, and later the loading chant and the opening scenes.
+1. **Measured the 2021 version first**, then designed the new one before building it: the study, the storyboard, the screens, and later the loading chant and the opening scenes.
 2. **Rules before pixels.** The first pull requests were the rules and a pure match reducer, then the rival, then stats, badges and storage, each with its tests. The faces, hands, rings and sounds came after, drawn and synthesized for this game.
 3. **Shipped in the open.** 40 pull requests are merged, and each merge to `main` redeploys the site. Issues, labels and a wiki track the work.
 
@@ -56,7 +56,7 @@ Every key the game listens to. Keys held with Ctrl, Alt or Cmd are left to the b
 
 ## What's next
 
-Every issue on the last board (R-05: match length, the read-out, the buzz, the calm count) is shipped and closed. Ideas, not promises:
+The last round (match length, the read-out, the buzz, the calm count) is shipped and closed. Ideas, not promises:
 
 - A second rival with a different way of reading you.
 - Two players on one keyboard.
